@@ -8,7 +8,11 @@
 
 namespace app\index\controller;
 
+use think\Request;
 
 class Store extends Common {
+    public function select(){
 
+        dump(Request::instance()->get());
+    }
 }

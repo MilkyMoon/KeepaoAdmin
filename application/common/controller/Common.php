@@ -12,7 +12,6 @@ use think\Controller;
 use think\Request;
 
 class Common extends Controller {
-    public $param;
     public function _initialize()
     {
         parent::_initialize();
@@ -22,8 +21,5 @@ class Common extends Controller {
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, authKey, sessionId");
         header('Content-Type:text/html; charset=utf-8');
-
-        $param =  Request::instance()->param();
-        $this->param = $param;
     }
 }

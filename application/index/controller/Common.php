@@ -8,12 +8,15 @@
 
 namespace app\index\controller;
 
-
-use think\Controller;
 use Hooklife\ThinkphpWechat\Wechat;
+use think\Request;
 
-class Common extends Controller {
+class Common extends \app\common\controller\Common {
+    public $param;
     public function _initialize(){
         parent::_initialize();
+
+        $param =  Request::instance()->param();
+        $this->param = $param;
     }
 }

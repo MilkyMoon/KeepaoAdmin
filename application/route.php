@@ -18,7 +18,13 @@ return [
         ':name' => ['index/hello', ['method' => 'post']],
     ],
     // 【微信】网页授权登录
-    'index/login/oauth' => ['index/login/wechat_oauth', ['method' => 'POST']],
+    'wechat/login/oauth' => ['wechat/login/wechat_oauth', ['method' => 'POST']],
+
+    // 【前台】附近门店获取
+    'index/store/select' => ['index/store/select', ['method' => 'GET']],
+    // 【前台】门店搜索
+    'index/store/search' => ['index/store/search', ['method' => 'GET']],
+
     // MISS路由
     '__miss__'  => 'index/base/miss',
 
