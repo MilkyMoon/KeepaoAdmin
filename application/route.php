@@ -9,6 +9,12 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+\think\Route::group('admin',[
+    'login' => ['admin/common/login', ['method' => 'post']],
+    'register' => ['admin/common/register'],
+    '__miss__' => 'admin/common/miss',
+]);
+
 return [
     '__pattern__' => [
         'name' => '\w+',
@@ -26,6 +32,6 @@ return [
     'index/store/search' => ['index/store/search', ['method' => 'GET']],
 
     // MISS路由
-    '__miss__'  => 'index/base/miss',
+    '__miss__' => 'admin/common/miss',
 
 ];

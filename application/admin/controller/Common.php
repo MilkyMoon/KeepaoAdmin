@@ -9,6 +9,7 @@
 namespace app\admin\controller;
 
 use app\admin\model\Admin;
+use app\common\controller\Token;
 use think\Exception;
 use think\Request;
 
@@ -72,5 +73,113 @@ class Common
         }
 
         return json_encode(['value' => false, 'message' => '你没有此操作的权限，如有疑问请与超级管理员联系。'], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function login(Request $request)
+    {
+        $_token = Request::instance()->param('_token');
+        //判断token是否为空
+        if (!isset($_token) || empty($_token))
+        {
+            if (!Request::instance()->has('username', 'post')) {
+                return json_encode([
+                    'value' => false,
+                    'message' => '用户名不能为空'
+                ], JSON_UNESCAPED_UNICODE);
+            }
+
+            if (!Request::instance()->has('password', 'post')) {
+                return json_encode([
+                    'value' => false,
+                    'message' => '密码不能为空'
+                ], JSON_UNESCAPED_UNICODE);
+            }
+
+            $username = Request::instance()->param('username');
+            $password = md5(Request::instance()->param('password'));
+
+            $admin = Admin::get([
+                'account' => $username,
+                'password' => $password
+            ]);
+
+            if (is_null($admin)) {
+                return json_encode([
+                    'value' => false,
+                    'message' => '用户名或密码错误'
+                ], JSON_UNESCAPED_UNICODE);
+            }
+            $iat = strtotime('now');
+            $exp = strtotime(date('Y-m-d',strtotime("+1day", $iat)));
+            $_token = Token::get_token($admin->account, $iat, $exp, Request::instance()->header()['host']);
+            dump($_token);
+            return json_encode([
+                'value' => false,
+                'message' => $_token
+            ], JSON_UNESCAPED_UNICODE);
+
+        } else
+        {
+            return Token::check_token($_token);
+        }
+    }
+
+    public function register()
+    {
+        if (Request::instance()->isGet()) {
+            $_token = Request::instance()->token();
+            dump(session('__token__'));
+            return json_encode([
+                'value' => true,
+                'message' => $_token
+            ], JSON_UNESCAPED_UNICODE);
+        }
+
+        if (Request::instance()->isPost()) {
+            $_token = Request::instance()->param('_token');
+            if (!isset($_token) || empty($_token)) {
+                if ($_token != session('__token__')) {
+                    return json_encode([
+                        'value' => false,
+                        'message' => ''
+                    ], JSON_UNESCAPED_UNICODE);
+                }
+                if (!Request::instance()->has('username', 'post')) {
+                    return json_encode([
+                        'value' => false,
+                        'message' => '用户名不能为空'
+                    ], JSON_UNESCAPED_UNICODE);
+                }
+                if (!Request::instance()->has('password', 'post')) {
+                    return json_encode([
+                        'value' => false,
+                        'message' => '密码不能为空'
+                    ], JSON_UNESCAPED_UNICODE);
+                }
+
+                $username = Request::instance()->param('username');
+                $password = md5(Request::instance()->param('password'));
+
+                $admin = new Admin;
+                $admin->data([
+                    'account' => $username,
+                    'password' => $password
+                ]);
+                $admin->save();
+                return json_encode([
+                    'value' => true,
+                    'message' => '注册成功'
+                ], JSON_UNESCAPED_UNICODE);
+            }
+            return json_encode([
+                'value' => false,
+                'message' => ''
+            ], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    public function miss()
+    {
+        return json_encode(['value' => false, 'message' => '请求接口错误，请查看文档或与管理员联系。'], JSON_UNESCAPED_UNICODE);
     }
 }
