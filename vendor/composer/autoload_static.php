@@ -64,6 +64,7 @@ class ComposerStaticInit73d5bf89285288576ea0882cc1337bd2
         'O' => 
         array (
             'Overtrue\\Socialite\\' => 19,
+            'Overtrue\\EasySms\\' => 17,
         ),
         'M' => 
         array (
@@ -78,6 +79,10 @@ class ComposerStaticInit73d5bf89285288576ea0882cc1337bd2
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
+        ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
         ),
         'E' => 
         array (
@@ -179,6 +184,10 @@ class ComposerStaticInit73d5bf89285288576ea0882cc1337bd2
         array (
             0 => __DIR__ . '/..' . '/overtrue/socialite/src',
         ),
+        'Overtrue\\EasySms\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/overtrue/easy-sms/src',
+        ),
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
@@ -198,6 +207,10 @@ class ComposerStaticInit73d5bf89285288576ea0882cc1337bd2
         'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'EasyWeChat\\' => 
         array (

@@ -24,7 +24,9 @@
         "topthink/think-mongo": "1.*",
         "topthink/think-queue": "1.*",
         "topthink/think-image": "1.*",
-        "hooklife/thinkphp5-wechat": "^1.1"
+        "hooklife/thinkphp5-wechat": "^1.1",
+        "overtrue/easy-sms": "^1.0",
+        "firebase/php-jwt": "^5.0"
     },
     "autoload": {
         "psr-4": {
