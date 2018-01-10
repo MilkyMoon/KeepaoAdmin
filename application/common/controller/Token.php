@@ -20,6 +20,17 @@ class Token
 
     }
 
+    /**
+     * Function: get_token
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * @param $aId      用户id
+     * @param $iat      发送时间，时间戳
+     * @param $exp      过期时间，时间戳
+     * @param $aud      请求者网址
+     * @return string
+     */
     public static function get_token($aId, $iat, $exp, $aud)
     {
         $playload = array(
@@ -34,14 +45,36 @@ class Token
         return $jwt;
     }
 
-    public static function encode_token($_token)
+    public static function encode_token_admin($_token)
     {
-        return JWT::decode($_token, md5(Token::$key), array('HS256'));
+        try{
+            $token = JWT::decode($_token, md5(Token::$key), array('HS256'));
+        }catch (\Exception $exception){
+            return [
+                'value' => false,
+                'message' => 'token验证错误'
+            ];
+        }
+
+    }
+
+    public static function encode_token_user($_token)
+    {
+        try{
+            $token = JWT::decode($_token, md5(Token::$key), array('HS256'));
+            return $token;
+        }catch (\Exception $exception){
+            return result_array(['error' => '验证不通过']);
+        }
+
     }
 
     public static function check_token($_token)
     {
-        $token = JWT::decode($_token, md5(Token::$key), array('HS256'));
+        $token = Token::encode_token_admin($_token, md5(Token::$key), array('HS256'));
+        if (is_array($token)) {
+            return json_encode($token, JSON_UNESCAPED_UNICODE);
+        }
         $admin = Admin::get([
             'account' => $token->aId,
         ]);
