@@ -8,11 +8,34 @@
 
 namespace app\index\controller;
 
-use think\Request;
+use app\index\model;
 
 class Store extends Common {
+    /**
+     * Function: select
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * @param   lng   [double]          经度
+     * @param   lat   [double]          纬度
+     * @param   city  [string]          城市
+     * @param   page  [int]             当前页数
+     * @param   limit [int]             每页数量
+     */
     public function select(){
+        $store = new model\Store();
 
-        dump(Request::instance()->get());
+        $param = $this->param;
+
+        $keywords = !empty($param['keywords']) ? $param['keywords'] : '';
+        $city     = !empty($param['city']) ? $param['city'] : '';
+        $lng      = !empty($param['lng']) ? $param['lng'] : '';
+        $lat      = !empty($param['lat']) ? $param['lat'] : '';
+        $page     = !empty($param['page']) ? $param['page'] : '';
+        $limit    = !empty($param['limit']) ? $param['limit'] : '';
+
+        $data = $store->getDataList($keywords,$city,$lng,$lat,$page,$limit);
+
+        return result_array(['data' => $data]);
     }
 }
