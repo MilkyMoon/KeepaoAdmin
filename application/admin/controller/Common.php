@@ -75,7 +75,7 @@ class Common
         return json_encode(['value' => false, 'message' => '你没有此操作的权限，如有疑问请与超级管理员联系。'], JSON_UNESCAPED_UNICODE);
     }
 
-    public function login(Request $request)
+    public function login()
     {
         $_token = Request::instance()->param('_token');
         //判断token是否为空
@@ -165,11 +165,18 @@ class Common
                     'account' => $username,
                     'password' => $password
                 ]);
-                $admin->save();
-                return json_encode([
-                    'value' => true,
-                    'message' => '注册成功'
-                ], JSON_UNESCAPED_UNICODE);
+                try{
+                    $admin->save();
+                    return json_encode([
+                        'value' => true,
+                        'message' => '注册成功'
+                    ], JSON_UNESCAPED_UNICODE);
+                } catch (Exception $e) {
+                    return json_encode([
+                        'value' => false,
+                        'message' => '注册失败'
+                    ], JSON_UNESCAPED_UNICODE);
+                }
             }
             return json_encode([
                 'value' => false,
