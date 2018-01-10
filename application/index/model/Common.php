@@ -9,8 +9,12 @@
 namespace app\index\model;
 
 use think\Model;
+use app\index\validate;
+use think\Request;
 
 class Common extends Model {
+    //字段过滤
+    protected $field = true;
     /**
      * [getDataById 根据主键获取详情]
      * @PengZong
@@ -37,16 +41,13 @@ class Common extends Model {
      */
     public function createData($param)
     {
-
-        // 验证
-        $validate = validate($this->name);
-        if (!$validate->check($param)) {
-            $this->error = $validate->getError();
-            return false;
-        }
         try {
-            $this->data($param)->allowField(true)->save();
-            return true;
+            $result = $this->validate('index/'.$this->name)->save($param);
+            if (false == $result) {
+                return false;
+            }
+            $pk = $this->getPk();
+            return $this->getDataById($this->$pk);
         } catch(\Exception $e) {
             $this->error = '添加失败';
             return false;
@@ -180,11 +181,9 @@ class Common extends Model {
             $this->data($param)->allowField(true)->save();
             return true;
         }catch (\Exception $e){
-
             $this->error = '添加失败';
             return false;
         }
-
     }
 
     /**
@@ -202,8 +201,13 @@ class Common extends Model {
             return false;
         }
         try{
-            $this->allowField(true)->save($param, ['id' => $id]);
-            return true;
+            $pk = $this->getPk();
+            $result = $this->validate('index/'.$this->name)->save($param, [$pk => $id]);
+            if (false == $result) {
+                return false;
+            }
+
+            return $this->getDataById($this->$pk);
         }catch (\Exception $e){
             $this->error = '编辑失败';
             return false;

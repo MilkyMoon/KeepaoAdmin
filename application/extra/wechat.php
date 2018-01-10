@@ -48,7 +48,7 @@ return [
      */
     'oauth'   => [
         'scopes'   => ['snsapi_userinfo'],
-        'callback' => 'http://7qqsns.natappfree.cc/ThinkAdmin/index.php/index/oauth/oauth_callback',
+        'callback' => 'http://jxsdiw.natappfree.cc//KeepaoAdmin/index.php/wechat/oauth/oauth_callback',
     ],
     /**
      * 微信支付
