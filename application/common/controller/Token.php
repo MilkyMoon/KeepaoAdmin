@@ -49,6 +49,7 @@ class Token
     {
         try{
             $token = JWT::decode($_token, md5(Token::$key), array('HS256'));
+            return $token;
         }catch (\Exception $exception){
             return [
                 'value' => false,

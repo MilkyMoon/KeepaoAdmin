@@ -128,7 +128,6 @@ class Common
     {
         if (Request::instance()->isGet()) {
             $_token = Request::instance()->token();
-            dump(session('__token__'));
             return json_encode([
                 'value' => true,
                 'message' => $_token
@@ -165,6 +164,7 @@ class Common
                     'account' => $username,
                     'password' => $password
                 ]);
+
                 try{
                     $admin->save();
                     return json_encode([

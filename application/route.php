@@ -12,7 +12,8 @@
 \think\Route::group('admin',[
     'login' => ['admin/common/login', ['method' => 'post']],
     'register' => ['admin/common/register'],
-    '__miss__' => 'admin/common/miss',
+    'first' => ['admin/admin/first'],
+//    '__miss__' => 'admin/common/miss',
 ]);
 
 return [
@@ -32,6 +33,6 @@ return [
     'index/store/search' => ['index/store/search', ['method' => 'GET']],
 
     // MISS路由
-    '__miss__' => 'admin/common/miss',
+//    '__miss__' => 'admin/common/miss',
 
 ];
