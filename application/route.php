@@ -10,10 +10,10 @@
 // +----------------------------------------------------------------------
 
 \think\Route::group('admin',[
-    'login' => ['admin/common/login', ['method' => 'post']],
-    'register' => ['admin/common/register'],
+    'login' => ['admin/behavior/login', ['method' => 'post']],
+    'register' => ['admin/behavior/register'],
     'first' => ['admin/admin/first'],
-//    '__miss__' => 'admin/common/miss',
+//    '__miss__' => 'admin/behavior/miss',
 ]);
 
 return [
@@ -32,7 +32,8 @@ return [
     // 【前台】门店搜索
     'index/store/search' => ['index/store/search', ['method' => 'GET']],
 
+    'test' => ['admin/test/index', ['method' => 'GET|POST']],
     // MISS路由
-//    '__miss__' => 'admin/common/miss',
+//    '__miss__' => 'admin/behavior/miss',
 
 ];

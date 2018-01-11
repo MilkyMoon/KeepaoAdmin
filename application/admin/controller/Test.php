@@ -10,11 +10,18 @@ namespace app\admin\controller;
 
 
 use app\admin\model\Admin;
+use app\common\controller\Token;
+use think\Request;
 
-class Test
+class Test extends Common
 {
+    public function __construct(Request $request)
+    {
+        parent::__construct($request);
+    }
+
     public function index()
     {
-        return Admin::get(1);
+
     }
 }
