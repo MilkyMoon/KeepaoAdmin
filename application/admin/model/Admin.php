@@ -7,7 +7,10 @@
  */
 namespace app\admin\model;
 
+use think\Exception;
+use think\exception\DbException;
 use think\Model;
+use think\Request;
 
 class Admin extends Model
 {
@@ -20,8 +23,16 @@ class Admin extends Model
     //设置自动插入修改时间
     protected $updateTime = 'modifyTime';
 
+    //添加默认值
+    protected $insert = ['state' => 1];
+
     //设置状态字段
     protected $stateStr = 'state';
+
+    //类型数组
+    protected $statusArr = [1 => '初始状态', 2 => '启用', 3 => '注销', null => '未知状态'];
+    protected $genderArr = [1 => '男', 2 => '女', 0 => '未知', null => '未知'];
+
 
     public function getStateStr()
     {
@@ -40,8 +51,7 @@ class Admin extends Model
      */
     public function getStateAttr($value)
     {
-        $status = [1 => '初始状态', 2 => '启用', 3 => '注销', null => '未知状态'];
-        return $status[$value];
+        return $this->statusArr[$value];
     }
 
     /**
@@ -56,8 +66,7 @@ class Admin extends Model
      */
     public function getGenderAttr($value)
     {
-        $status = [1 => '男', 2 => '女', 0 => '未知', null => '未知'];
-        return $status[$value];
+        return $this->genderArr[$value];
     }
 
     /**
@@ -91,7 +100,12 @@ class Admin extends Model
         $admin = Admin::get($id);
 
         if ($admin == null) {
-            return ['value' => $value, 'message' => '没有此用户。'];
+            return [
+                'value' => $value,
+                'data' => [
+                    'message' => '没有此用户。'
+                ]
+            ];
         }
 
         switch ($admin->getData('state')) {
@@ -107,6 +121,178 @@ class Admin extends Model
             default:
                 $message = '你的帐号有异常不能进行此操作，如有疑问请联系客服。';
         }
-        return ['value' => $value, 'message' => $message];
+        return [
+            'value' => $value,
+            'data' => [
+                'message' => $message
+            ]
+        ];
+    }
+
+    public function select($account, $page = 1)
+    {
+        if (!empty($account))
+            $admin = Admin::where('account', 'like', '%'.$account.'%')->paginate(1, false, ['page' => $page]);
+        else
+            $admin = Admin::paginate(1, false, ['page' => $page]);
+        $flag = false;
+        if ($admin->count() > 0) {
+            $flag = true;
+        }
+        return [
+            'value' => $flag,
+            'data' => [
+                'message' => '',
+                'data' => $admin
+            ]
+        ];
+    }
+
+
+    public function add($data)
+    {
+        if (isset($data['account']))
+        {
+            if ($this->checkAccount($data['account'])['value'])
+            {
+                return [
+                    'value' => false,
+                    'data'  => [
+                        'message' => '帐户已存在'
+                    ]
+                ];
+            }
+        }
+        if (isset($data['password']))
+        {
+            $data['password'] = md5($data['password']);
+        }
+        $data['createUser'] = session('sId');
+        $data['modifyUser'] = session('sId');
+        $data['createType'] = 2;
+        $data['modifyType'] = 2;
+        $user = new Admin;
+
+        $result = $user->validate(true)->allowField(true)->save($data);
+        $flag = true;
+        $msg = '添加成功';
+        if (false == $result) {
+            $flag = false;
+            $msg = $user->getError();
+        }
+
+        return [
+            'value' => $flag,
+            'data' => [
+                'message' => $msg
+            ]
+        ];
+    }
+
+    /**
+     * Function: checkAccount
+     * Description: 检查$account变量中的数据在数据中是否存在
+     * Author  : wry
+     * DateTime: 18/1/11 上午12:29
+     *
+     * @param $accunt
+     *
+     * @return bool
+     * @throws \think\exception\DbException
+     */
+    public function checkAccount($accunt, $sId = '') {
+        $admin = Admin::get([
+            'account' => $accunt
+        ]);
+        $flag = true;
+        $msg = '账号已存在';
+        if (is_null($admin)) {
+            $flag = false;
+            $msg = '';
+        } else {
+            if (!empty($sId)) {
+                if ($admin->getAttr('sId') == $sId) {
+                    $flag = false;
+                    $msg = '';
+                }
+            }
+        }
+
+        return [
+            'value' => $flag,
+            'data' => [
+                'message' => $msg
+            ]
+        ];
+    }
+
+    public function del($data)
+    {
+        if (empty($data)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '删除条件不能为空'
+                ]
+            ];
+        }
+        //dump($data);
+        Admin::destroy($data);
+        return [
+            'value' => true,
+            'data' => [
+                'message' => '删除成功'
+            ]
+        ];
+    }
+
+    public function renew($data)
+    {
+        if (!isset($data['sId']))
+        {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '缺少主键'
+                ]
+            ];
+        }
+
+        if (isset($data['password']))
+        {
+            $data['password'] = md5($data['password']);
+        }
+
+        if (isset($data['account']))
+        {
+            if ($this->checkAccount($data['account'], $data['sId'])['value'])
+            {
+                return [
+                    'value' => false,
+                    'data'  => [
+                        'message' => '帐户已存在'
+                    ]
+                ];
+            }
+        }
+        $admin = new Admin;
+        $data['modifyUser'] = session('sId');
+        $data['modifyType'] = 2;
+
+        $result = $admin->validate(true)->allowField(true)->isUpdate(true)->save($data);
+        $flag = true;
+        $msg = '更新成功';
+        if (false == $result) {
+            $flag = false;
+            $msg = $admin->getError();
+        }
+        //dump($msg);
+        return [
+            'value' => $flag,
+            'data' => [
+                'message' => $msg
+            ]
+        ];
+
     }
 }

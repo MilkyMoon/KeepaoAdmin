@@ -10,11 +10,60 @@ namespace app\admin\controller;
 
 use app\admin\model\Admin;
 use app\common\controller\Token;
+use think\Controller;
 use think\Exception;
+use think\exception\HttpResponseException;
 use think\Request;
 
-class Common
+class Common extends Controller
 {
+    public function __construct(Request $request = null)
+    {
+        parent::__construct($request);
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Credentials: true');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, authKey, sessionId");
+        header('Content-Type:text/html; charset=utf-8');
+
+        dump(session('sId'));
+        //查看请求是否携带Token
+        if (!$request->has('_token', 'param', true)) {
+            throw new HttpResponseException(json([
+                'value' => false,
+                'data' => [
+                    'message' => '非法请求'
+                ]
+            ]));
+        }
+
+        $check_token = Token::check_token($request->param('_token'));
+
+
+        if (!$check_token['value']) {
+            throw new HttpResponseException(json([
+                'value' => false,
+                'data' => [
+                    'message' => 'token验证失败'
+                ]
+            ]));
+        }
+
+        //验证权限
+        $path = Request::instance()->pathinfo();
+        //dump($path);
+        $check_auth = $this->checkAuth(session('sId'), $path);
+
+        if (!$check_auth['value']) {
+            throw new HttpResponseException(json([
+                'value' => false,
+                'data' => [
+                    'message' => $check_auth['data']['message']
+                ]
+            ]));
+        }
+    }
+
     /**
      * Function: checkAuth
      * Description: 检查ID为$sId的用户是否 有$rule权限
@@ -29,16 +78,20 @@ class Common
      */
     public function checkAuth($sId, $rule)
     {
-        dump(Request::instance()->module());
         //检查用户状态
         $adminState = Admin::checkAdminState($sId);
         if (!$adminState['value']) {
-            return json_encode($adminState, JSON_UNESCAPED_UNICODE);
+            return $adminState;
         }
 
         $admin = Admin::get($sId);
         if (Count($admin->roles) == 0) {
-            return json_encode(['value' => false, 'message' => '你还没有被赋予角色不能进行此操作，如有疑问请与超级管理员联系。'], JSON_UNESCAPED_UNICODE);
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '你还没有被赋予角色不能进行此操作，如有疑问请与超级管理员联系。'
+                ]
+            ];
         }
 
         if (is_string($rule)) {
@@ -52,7 +105,12 @@ class Common
                 }
             }
             if (Count($roles) == 0) {
-                return json_encode(['value' => false, 'message' => '你被赋予角色已经注销，如有疑问请与超级管理员联系。'], JSON_UNESCAPED_UNICODE);
+                return [
+                    'value' => false,
+                    'data' => [
+                        'message' => '你被赋予角色已经注销，如有疑问请与超级管理员联系。'
+                    ]
+                ];
             }
 
             //获取权限集合
@@ -66,127 +124,23 @@ class Common
             }
 
             $permissions = array_unique($permissions);
+            //dump($permissions);
             if (in_array($rule, $permissions)) {
-                return json_encode(['value' => true, 'message' => ''], JSON_UNESCAPED_UNICODE);
+                return [
+                    'value' => true,
+                    'data' => [
+                        'message' => '验证成功'
+                    ]
+                ];
             }
 
         }
 
-        return json_encode(['value' => false, 'message' => '你没有此操作的权限，如有疑问请与超级管理员联系。'], JSON_UNESCAPED_UNICODE);
-    }
-
-    public function login()
-    {
-        $_token = Request::instance()->param('_token');
-        //判断token是否为空
-        if (!isset($_token) || empty($_token))
-        {
-            if (!Request::instance()->has('username', 'post')) {
-                return json_encode([
-                    'value' => false,
-                    'message' => '用户名不能为空'
-                ], JSON_UNESCAPED_UNICODE);
-            }
-
-            if (!Request::instance()->has('password', 'post')) {
-                return json_encode([
-                    'value' => false,
-                    'message' => '密码不能为空'
-                ], JSON_UNESCAPED_UNICODE);
-            }
-
-            $username = Request::instance()->param('username');
-            $password = md5(Request::instance()->param('password'));
-
-            $admin = Admin::get([
-                'account' => $username,
-                'password' => $password
-            ]);
-
-            if (is_null($admin)) {
-                return json_encode([
-                    'value' => false,
-                    'message' => '用户名或密码错误'
-                ], JSON_UNESCAPED_UNICODE);
-            }
-            $iat = strtotime('now');
-            $exp = strtotime(date('Y-m-d',strtotime("+1day", $iat)));
-            $_token = Token::get_token($admin->account, $iat, $exp, Request::instance()->header()['host']);
-            dump($_token);
-            return json_encode([
-                'value' => false,
-                'message' => $_token
-            ], JSON_UNESCAPED_UNICODE);
-
-        } else
-        {
-            return Token::check_token($_token);
-        }
-    }
-
-    public function register()
-    {
-        if (Request::instance()->isGet()) {
-            $_token = Request::instance()->token();
-            return json_encode([
-                'value' => true,
-                'message' => $_token
-            ], JSON_UNESCAPED_UNICODE);
-        }
-
-        if (Request::instance()->isPost()) {
-            $_token = Request::instance()->param('_token');
-            if (!isset($_token) || empty($_token)) {
-                if ($_token != session('__token__')) {
-                    return json_encode([
-                        'value' => false,
-                        'message' => ''
-                    ], JSON_UNESCAPED_UNICODE);
-                }
-                if (!Request::instance()->has('username', 'post')) {
-                    return json_encode([
-                        'value' => false,
-                        'message' => '用户名不能为空'
-                    ], JSON_UNESCAPED_UNICODE);
-                }
-                if (!Request::instance()->has('password', 'post')) {
-                    return json_encode([
-                        'value' => false,
-                        'message' => '密码不能为空'
-                    ], JSON_UNESCAPED_UNICODE);
-                }
-
-                $username = Request::instance()->param('username');
-                $password = md5(Request::instance()->param('password'));
-
-                $admin = new Admin;
-                $admin->data([
-                    'account' => $username,
-                    'password' => $password
-                ]);
-
-                try{
-                    $admin->save();
-                    return json_encode([
-                        'value' => true,
-                        'message' => '注册成功'
-                    ], JSON_UNESCAPED_UNICODE);
-                } catch (Exception $e) {
-                    return json_encode([
-                        'value' => false,
-                        'message' => '注册失败'
-                    ], JSON_UNESCAPED_UNICODE);
-                }
-            }
-            return json_encode([
-                'value' => false,
-                'message' => ''
-            ], JSON_UNESCAPED_UNICODE);
-        }
-    }
-
-    public function miss()
-    {
-        return json_encode(['value' => false, 'message' => '请求接口错误，请查看文档或与管理员联系。'], JSON_UNESCAPED_UNICODE);
+        return [
+            'value' => false,
+            'data' => [
+                'message' => '你没有此操作的权限，如有疑问请与超级管理员联系。'
+            ]
+        ];
     }
 }

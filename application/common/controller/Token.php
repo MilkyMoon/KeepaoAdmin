@@ -31,14 +31,15 @@ class Token
      * @param $aud      请求者网址
      * @return string
      */
-    public static function get_token($aId, $iat, $exp, $aud)
+    public static function get_token($aId, $iat, $exp, $aud, $psd = '')
     {
         $playload = array(
             'iss' => 'mskp',
             'aud' => $aud,
             'aId' => $aId,
             'iat' => $iat,
-            'exp' => $exp
+            'exp' => $exp,
+            'psd' => $psd
         );
         $jwt = JWT::encode($playload, md5(Token::$key));
 
@@ -50,10 +51,12 @@ class Token
         try{
             $token = JWT::decode($_token, md5(Token::$key), array('HS256'));
             return $token;
-        }catch (\Exception $exception){
+        } catch (\Exception $exception){
             return [
                 'value' => false,
-                'message' => 'token验证错误'
+                'data' => [
+                    'message' => '非法请求'
+                ]
             ];
         }
 
@@ -73,30 +76,95 @@ class Token
     public static function check_token($_token)
     {
         $token = Token::encode_token_admin($_token, md5(Token::$key), array('HS256'));
+
+
         if (is_array($token)) {
-            return json_encode($token, JSON_UNESCAPED_UNICODE);
-        }
-        $admin = Admin::get([
-            'account' => $token->aId,
-        ]);
-        if (is_null($admin)) {
-            return json_encode([
-                'value' => false,
-                'message' => 'token失效'
-            ], JSON_UNESCAPED_UNICODE);
+            return $token;
         }
 
-        $currentTime = time();
-        if ($currentTime > $token->exp) {
-            return json_encode([
+        if ($token->aId != '1')
+        {
+            return [
                 'value' => false,
-                'message' => 'token过期'
-            ], JSON_UNESCAPED_UNICODE);
+                'data' => [
+                    'message' => '非法请求'
+                ]
+            ];
         }
-        return json_encode([
+
+        //dump(date('Y-m-d h-i-s', $token->exp));
+
+        return [
             'value' => true,
-            'message' => 'token验证通过'
-        ], JSON_UNESCAPED_UNICODE);
+            'data' => [
+                'message' => 'token验证通过'
+            ]
+        ];
+    }
 
+    public static function refresh_token($refresh_token)
+    {
+        $token = Token::encode_token_admin($refresh_token, md5(Token::$key), array('HS256'));
+        if (is_array($token)) {
+            return $token;
+        }
+
+        if ($token->aId != session('sId'))
+        {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '非法请求'
+                ]
+            ];
+        }
+
+        $admin = Admin::get([
+            'sId' =>  $token->aId,
+            'key' => $token->psd
+        ]);
+
+        if (is_null($admin)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => 'token失效'
+                ]
+            ];
+        }
+
+        try{
+            $admin->key = Token::create_key(6);
+            $admin->save();
+        } catch (Exception $exception)
+        {
+            return json([
+                'value' => false,
+                'data' => [
+                    'message' => $exception
+                ]
+            ]);
+        }
+
+        $iat = strtotime('now');
+        $exp = strtotime("+1 day", $iat);
+        $access_token = Token::get_token($admin->account, $iat, $exp, Request::instance()->header()['host']);
+
+        return [
+            'value' => true,
+            'data' => [
+                'message' => 'token验证通过',
+                'access_token' => $access_token
+            ]
+        ];
+    }
+
+    private static function create_key($length)
+    {
+        $randkey = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randkey .= chr(mt_rand(33, 126));
+        }
+        return md5($randkey);
     }
 }
