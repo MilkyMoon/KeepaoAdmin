@@ -70,7 +70,6 @@ class Token
         }catch (\Exception $exception){
             return false;
         }
-
     }
 
     public static function check_token($_token)
