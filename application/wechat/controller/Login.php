@@ -9,7 +9,10 @@
 
 namespace app\wechat\controller;
 
+use app\common\controller\Token;
+use app\index\model\User;
 use EasyWeChat\Foundation\Application;
+use think\Request;
 use think\Session;
 
 class Login extends Common {
@@ -31,7 +34,7 @@ class Login extends Common {
 
         // 未登录
         if (empty(Session::get('wechat_user'))) {
-            Session::set('target_url', '/index/login/index');    //session请求地址
+            Session::set('target_url', '/wechat/login/wechat_oauth');    //session请求地址
             // return $oauth->redirect();
             // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
             $oauth->redirect()->send();
@@ -39,9 +42,38 @@ class Login extends Common {
         }
 
         // 已经登录过
-        $user=Session::get('wechat_user');
+        $wechatuser=Session::get('wechat_user');
+        $original = $wechatuser['original'];
 
-        return $user;
+        $userModel = new User();
+        $param['openId'] = $original['openid'];
+        $user = $userModel->findUser($param);
+
+        if (!$user){
+            $param['openId']  = $original['openid'];
+            $param['gender']  = $original['sex'];
+            $param['heading'] = $original['headimgurl'];
+            $param['name']    = $original['nickname'];
+
+            $user = $userModel->addUser($param);
+
+            if (!$user){
+                return result_array(['error' => $userModel->getError()]);
+            }
+        }
+
+        $data['data'] = $user;
+
+        $iat = strtotime('now');  //发放时间
+        $exp = strtotime('+1 week', $iat);  //失效时间
+        //生成token
+        $data['token'] = Token::get_token($user['openId'],$iat,$exp,Request::instance()->header()['host']);
+
+
+        return result_array(['data' => $data]);
+    }
+
+    public function relogin(){
 
     }
 }

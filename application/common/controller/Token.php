@@ -68,7 +68,7 @@ class Token
             $token = JWT::decode($_token, md5(Token::$key), array('HS256'));
             return $token;
         }catch (\Exception $exception){
-            return result_array(['error' => '验证不通过']);
+            return false;
         }
 
     }

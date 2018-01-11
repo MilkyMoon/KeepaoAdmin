@@ -40,9 +40,6 @@ class Store extends Common{
             $list = $list->field('*,(2 * 6378.137* ASIN(SQRT(POW(SIN(3.1415926535898*('.$lat.'-latitude)/360),2)+COS(3.1415926535898*'.$lat.'/180)* COS(latitude * 3.1415926535898/180)*POW(SIN(3.1415926535898*('.$lng.'-longitude)/360),2))))*1000 as juli')->order('juli');
         }
 
-        //$list = $this->query("select *,(2 * 6378.137* ASIN(SQRT(POW(SIN(3.1415926535898*(".$lat."-latitude)/360),2)+COS(3.1415926535898*".$lat."/180)* COS(latitude * 3.1415926535898/180)*POW(SIN(3.1415926535898*(".$lng."-longitude)/360),2))))*1000 as juli from `store`  where city = '".$city."' order by juli asc limit ".(($page-1)*$limit+1).",".$limit);
-        //dump($list);
-
         // 若有分页
         if ($page && $limit) {
             $list = $list->page($page, $limit);

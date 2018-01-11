@@ -38,4 +38,29 @@ class Store extends Common {
 
         return result_array(['data' => $data]);
     }
+
+    /**
+     * Function: details
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * 门店详细信息
+     *
+     * @param  id   int  门店id
+     * @return Json
+     */
+    public function details(){
+        $store = new model\Store();
+
+        $param = $this->param;
+        $id = !empty($param['id']) ? $param['id'] : '';
+
+        $data = $store->getDataById($id);
+
+        if (!$data){
+            return result_array(['error' => $store->getError()]);
+        }
+
+        return result_array(['data' => $data]);
+    }
 }
