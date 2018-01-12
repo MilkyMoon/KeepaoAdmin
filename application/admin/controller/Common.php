@@ -28,7 +28,7 @@ class Common extends Controller
 
         dump(session('sId'));
         //查看请求是否携带Token
-        if (!$request->has('_token', 'param', true)) {
+        if (!$request->has('access-token', 'header', true)) {
             throw new HttpResponseException(json([
                 'value' => false,
                 'data' => [
@@ -37,7 +37,7 @@ class Common extends Controller
             ]));
         }
 
-        $check_token = Token::check_token($request->param('_token'));
+        $check_token = Token::check_token($request->header('access-token'));
 
 
         if (!$check_token['value']) {
@@ -51,7 +51,7 @@ class Common extends Controller
 
         //验证权限
         $path = Request::instance()->pathinfo();
-        //dump($path);
+        dump($path);
         $check_auth = $this->checkAuth(session('sId'), $path);
 
         if (!$check_auth['value']) {
@@ -124,7 +124,7 @@ class Common extends Controller
             }
 
             $permissions = array_unique($permissions);
-            //dump($permissions);
+            dump($permissions);
             if (in_array($rule, $permissions)) {
                 return [
                     'value' => true,
@@ -133,7 +133,6 @@ class Common extends Controller
                     ]
                 ];
             }
-
         }
 
         return [

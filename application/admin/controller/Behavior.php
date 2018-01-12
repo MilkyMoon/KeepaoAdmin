@@ -20,6 +20,7 @@ class Behavior
 
     public function login()
     {
+
         if (!Request::instance()->has('account', 'post')) {
             return json([
                 'value' => false,
@@ -70,9 +71,9 @@ class Behavior
 
         $iat = strtotime('now');
         $exp = strtotime("+1 week", $iat);
-        $refresh_token = Token::get_token($admin->sId, $iat, $exp, Request::instance()->header()['host']);
-        $exp = strtotime(date('Y-m-d',strtotime("-1 day", $iat)));
-        $access_token = Token::get_token($admin->sId, $iat, $exp, Request::instance()->header()['host'], $admin->key);
+        $refresh_token = Token::get_token($admin->sId, $iat, $exp, Request::instance()->header()['host'], $admin->key);
+        $exp = strtotime(date('Y-m-d',strtotime("+1 day", $iat)));
+        $access_token = Token::get_token($admin->sId, $iat, $exp, Request::instance()->header()['host']);
         session('sId', $admin->sId);
         return json([
             'value' => true,
@@ -176,5 +177,18 @@ class Behavior
             $randkey .= chr(mt_rand(33, 126));
         }
         return md5($randkey);
+    }
+
+    public function refresh(Request $request)
+    {
+        if ($request->has('refresh-token', 'header', true)) {
+            return json(Token::refresh_token($request->header('refresh-token')));
+        }
+        return json([
+            'value' => false,
+            'data' => [
+                'message' => '缺少refresk_token',
+            ]
+        ]);
     }
 }
