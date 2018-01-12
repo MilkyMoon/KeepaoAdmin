@@ -28,20 +28,6 @@ class Admin extends Common
 
     public function first(Request $request)
     {
-        if ($request->isGet()) {
-            if (!session('?csrf')) {
-                $csrf = md5($_SERVER['REQUEST_TIME_FLOAT']);
-                session('csrf', $csrf);
-            }
-            return json([
-                'value' => true,
-                'data' => [
-                    'message' => '返回csrf',
-                    'csrf' => session('csrf')
-                ]
-            ]);
-        }
-
         if ($request->isPost())
         {
             if (!$request->has('csrf', 'header', true) || $request->header('csrf') != session('csrf'))
@@ -80,19 +66,6 @@ class Admin extends Common
 
     public function add(Request $request)
     {
-        if ($request->isGet()) {
-            if (!session('?csrf')) {
-                $csrf = $request->token();
-                session('csrf', $csrf);
-            }
-            return json([
-                'value' => true,
-                'data' => [
-                    'message' => '返回csrf',
-                    'csrf' => session('csrf')
-                ]
-            ]);
-        }
         if ($request->isPost()) {
             if (!$request->has('csrf', 'header', true) || $request->header('csrf') != session('csrf')) {
                 return json([
@@ -102,7 +75,7 @@ class Admin extends Common
                     ]
                 ]);
             }
-            session('csrf', $request->token());
+            session('csrf', md5($_SERVER['REQUEST_TIME_FLOAT']));
             return json($this->admin->add($request->param()));
         }
 
@@ -125,6 +98,21 @@ class Admin extends Common
                 ]
             ]);
         }
+    }
+
+    public function getrole(Request $request)
+    {
+        if ($request->has('aId', 'param', true)) {
+            return json($this->admin->getrole($request->param('aId')));
+        } else {
+            return json([
+                'value' => false,
+                'data' => [
+                    'message' => '缺少管理员Id'
+                ]
+            ]);
+        }
+
     }
 
 }

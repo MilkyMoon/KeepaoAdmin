@@ -255,4 +255,34 @@ class Role extends Model
         ];
 
     }
+
+    public function getper($rId)
+    {
+        $role = Role::get($rId);
+        if (is_null($role)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '用户不存在'
+                ]
+            ];
+        }
+        //dump($admin->roles());
+        $permissions = [];
+        foreach ($role->permissions as $permission) {
+            if ($permission->getData($permission->getStateStr())) {
+                array_push($permissions,[
+                    'sId' => $permission->getData('sId'),
+                    'name' => $permission->getData('name')
+                ]);
+            }
+        }
+        return [
+            'value' => true,
+            'data' => [
+                'message' => '查询成功',
+                'data' => $permissions
+            ]
+        ];
+    }
 }
