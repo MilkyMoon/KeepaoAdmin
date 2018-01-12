@@ -9,10 +9,32 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+
 \think\Route::group('admin',[
+    //登录
     'login' => ['admin/behavior/login', ['method' => 'post']],
+    //注册
     'register' => ['admin/behavior/register'],
+    //刷新Token
+    'refresh' => ['admin/behavior/refresh', ['method' => 'get']],
     'first' => ['admin/admin/first'],
+
+    //后台管理员
+    'admin/add' => ['admin/admin/add'],
+    'admin/select' => ['admin/admin/select', ['method' => 'get']],
+    'admin/delete' => ['admin/admin/delete', ['method' => 'post']],
+    'admin/update' => ['admin/admin/update', ['method' => 'post']],
+    'admin/addrole' => ['admin/urlink/add'],
+
+    //后台角色
+    'role/add' => ['admin/role/add'],
+    'role/select' => ['admin/role/select', ['method' => 'get']],
+    'role/delete' => ['admin/role/delete', ['method' => 'post']],
+    'role/update' => ['admin/role/update', ['method' => 'post']],
+
+    //后台权限
+    'permission/select' => ['admin/permission/select', ['method' => 'get']],
+
 //    '__miss__' => 'admin/behavior/miss',
 ]);
 

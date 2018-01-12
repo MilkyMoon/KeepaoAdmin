@@ -8,6 +8,7 @@
 
 namespace app\admin\model;
 
+use think\Db;
 use think\Model;
 
 class Role extends Model
@@ -20,6 +21,9 @@ class Role extends Model
 
     //设置自动插入修改时间
     protected $updateTime = 'modifyTime';
+
+    //添加默认值
+    protected $insert = ['state' => 1];
 
     //设置状态字段
     protected $stateStr = 'state';
@@ -57,4 +61,198 @@ class Role extends Model
         return $this->belongsToMany('Permission','\app\admin\model\Prlink', 'pId', 'rId');
     }
 
+
+    public function select($name, $page = 1)
+    {
+        if (!empty($name))
+            $role = Role::where('name', 'like', '%'.$name.'%')->order('state,sort')->paginate(10, false, ['page' => $page]);
+        else
+            $role = Role::order('state')->paginate(10, false, ['page' => $page]);
+        $flag = false;
+        $msg = '没找到数据';
+        if ($role->count() > 0) {
+            $flag = true;
+            $msg = '';
+        }
+        return [
+            'value' => $flag,
+            'data' => [
+                'message' => $msg,
+                'data' => $role
+            ]
+        ];
+    }
+
+
+    public function add($data)
+    {
+        if (isset($data['name']))
+        {
+            if ($this->checkAccount($data['name'])['value'])
+            {
+                return [
+                    'value' => false,
+                    'data'  => [
+                        'message' => '角色已存在'
+                    ]
+                ];
+            }
+        }
+
+        $data['createUser'] = session('sId');
+        $data['modifyUser'] = session('sId');
+        $data['createType'] = 2;
+        $data['modifyType'] = 2;
+        $role = new Role;
+
+        $result = $role->validate(true)->allowField(true)->save($data);
+        $flag = true;
+        $msg = '添加成功';
+        if (false == $result) {
+            $flag = false;
+            $msg = $role->getError();
+        }
+
+        return [
+            'value' => $flag,
+            'data' => [
+                'message' => $msg
+            ]
+        ];
+    }
+
+    /**
+     * Function: checkAccount
+     * Description: 检查$account变量中的数据在数据中是否存在
+     * Author  : wry
+     * DateTime: 18/1/11 上午12:29
+     *
+     * @param $accunt
+     *
+     * @return bool
+     * @throws \think\exception\DbException
+     */
+    public function checkAccount($name, $sId = '') {
+        $role = Role::get([
+            'name' => $name
+        ]);
+        $flag = true;
+        $msg = '账号已存在';
+        if (is_null($role)) {
+            $flag = false;
+            $msg = '';
+        } else {
+            if (!empty($sId)) {
+                if ($role->getAttr('sId') == $sId) {
+                    $flag = false;
+                    $msg = '';
+                }
+            }
+        }
+
+        return [
+            'value' => $flag,
+            'data' => [
+                'message' => $msg
+            ]
+        ];
+    }
+
+    public function del($data)
+    {
+        if (empty($data)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '删除条件不能为空'
+                ]
+            ];
+        }
+        dump($data);
+        $arr = explode(',', $data);
+        foreach ($arr as $a) {
+            $tmp = Urlink::get([
+                'rId' => $a
+            ]);
+            if (!is_null($tmp)) {
+                $tmp = Role::get($a);
+                return  [
+                    'value' => false,
+                    'data' => [
+                        'message' => '角色:<'.$tmp->getAttr('name').'>, 已关联到后台管理员,不能删除'
+                    ]
+                ];
+            }
+        }
+
+        Db::startTrans();
+        try {
+            Db::table('role')->delete($arr);
+            foreach ($arr as $a) {
+                Db::table('prlink')->where(['rId' => (int)$a])->delete();
+            }
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '删除失败'
+                ]
+            ];
+        }
+
+        return [
+            'value' => true,
+            'data' => [
+                'message' => '删除成功'
+            ]
+        ];
+    }
+
+    public function renew($data)
+    {
+        if (!isset($data['sId']))
+        {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '缺少主键'
+                ]
+            ];
+        }
+
+        if (isset($data['name']))
+        {
+            if ($this->checkAccount($data['name'], $data['sId'])['value'])
+            {
+                return [
+                    'value' => false,
+                    'data'  => [
+                        'message' => '帐户已存在'
+                    ]
+                ];
+            }
+        }
+        $role = new Role;
+        $data['modifyUser'] = session('sId');
+        $data['modifyType'] = 2;
+
+        $result = $role->validate(true)->allowField(true)->isUpdate(true)->save($data);
+        $flag = true;
+        //dump($role);
+        $msg = '更新成功';
+        if (false == $result) {
+            $flag = false;
+            $msg = '更新失败';
+        }
+        //dump($msg);
+        return [
+            'value' => $flag,
+            'data' => [
+                'message' => $msg
+            ]
+        ];
+
+    }
 }

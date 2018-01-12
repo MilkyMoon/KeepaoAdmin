@@ -7,6 +7,7 @@
  */
 namespace app\admin\model;
 
+use think\Db;
 use think\Exception;
 use think\exception\DbException;
 use think\Model;
@@ -24,7 +25,7 @@ class Admin extends Model
     protected $updateTime = 'modifyTime';
 
     //添加默认值
-    protected $insert = ['state' => 1];
+    protected $insert = ['state' => 1, 'gender' => 0, 'money' => 0];
 
     //设置状态字段
     protected $stateStr = 'state';
@@ -132,17 +133,19 @@ class Admin extends Model
     public function select($account, $page = 1)
     {
         if (!empty($account))
-            $admin = Admin::where('account', 'like', '%'.$account.'%')->paginate(1, false, ['page' => $page]);
+            $admin = Admin::where('account', 'like', '%'.$account.'%')->order('state')->paginate(10, false, ['page' => $page]);
         else
-            $admin = Admin::paginate(1, false, ['page' => $page]);
+            $admin = Admin::order('state')->paginate(10, false, ['page' => $page]);
         $flag = false;
+        $msg = '没有找到数据';
         if ($admin->count() > 0) {
             $flag = true;
+            $msg = '';
         }
         return [
             'value' => $flag,
             'data' => [
-                'message' => '',
+                'message' => $msg,
                 'data' => $admin
             ]
         ];
@@ -236,8 +239,24 @@ class Admin extends Model
                 ]
             ];
         }
-        //dump($data);
-        Admin::destroy($data);
+
+        Db::startTrans();
+        try {
+            $arr = explode(",", $data);
+            Db::table('admin')->delete($arr);
+            foreach ($arr as $a) {
+                Db::table('urlink')->where(['aId' => (int)$a])->delete();
+            }
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '删除失败'
+                ]
+            ];
+        }
         return [
             'value' => true,
             'data' => [
@@ -284,7 +303,7 @@ class Admin extends Model
         $msg = '更新成功';
         if (false == $result) {
             $flag = false;
-            $msg = $admin->getError();
+            $msg = '更新失败';
         }
         //dump($msg);
         return [

@@ -12,10 +12,12 @@ namespace app\admin\controller;
 use think\Controller;
 use think\exception\HttpResponseException;
 use think\Request;
+use think\Session;
 
 class Admin extends Common
 {
     private $admin;
+
     public function __construct(Request $request = null)
     {
         parent::__construct($request);
@@ -26,15 +28,33 @@ class Admin extends Common
 
     public function first(Request $request)
     {
-        if ($request->has('del', 'param', true)) {
-            return json($this->admin->del($request->param('del')));
-        } else {
+        if ($request->isGet()) {
+            if (!session('?csrf')) {
+                $csrf = md5($_SERVER['REQUEST_TIME_FLOAT']);
+                session('csrf', $csrf);
+            }
             return json([
-                'value' => false,
+                'value' => true,
                 'data' => [
-                    'message' => '缺少删除参数'
+                    'message' => '返回csrf',
+                    'csrf' => session('csrf')
                 ]
             ]);
+        }
+
+        if ($request->isPost())
+        {
+            if (!$request->has('csrf', 'header', true) || $request->header('csrf') != session('csrf'))
+            {
+                return json([
+                    'value' => false,
+                    'data'  => [
+                        'message' => '请不要重复提交数据',
+                    ]
+                ]);
+            }
+            session('csrf', md5($_SERVER['REQUEST_TIME_FLOAT']));
+            dump(session('csrf'));
         }
     }
 
@@ -53,22 +73,42 @@ class Admin extends Common
                 $account = $request->param('account');
                 return json($this->admin->select($account));
             } else {
-                return json([
-                    'value' => false,
-                    'data' => [
-                        'message' => '参数错误'
-                    ]
-                ]);
+                return json($this->admin->select(''));
             }
         }
     }
 
     public function add(Request $request)
     {
-        return json($this->admin->add($request->param()));
+        if ($request->isGet()) {
+            if (!session('?csrf')) {
+                $csrf = $request->token();
+                session('csrf', $csrf);
+            }
+            return json([
+                'value' => true,
+                'data' => [
+                    'message' => '返回csrf',
+                    'csrf' => session('csrf')
+                ]
+            ]);
+        }
+        if ($request->isPost()) {
+            if (!$request->has('csrf', 'header', true) || $request->header('csrf') != session('csrf')) {
+                return json([
+                    'value' => false,
+                    'data' => [
+                        'message' => '请不要重复提交数据',
+                    ]
+                ]);
+            }
+            session('csrf', $request->token());
+            return json($this->admin->add($request->param()));
+        }
+
     }
 
-    public function renew(Request $request)
+    public function update(Request $request)
     {
         return json($this->admin->renew($request->param()));
     }
@@ -76,7 +116,7 @@ class Admin extends Common
     public function delete(Request $request)
     {
         if ($request->has('del', 'param', true)) {
-            return json($this->admin->delete($request->param('del')));
+            return json($this->admin->del($request->param('del')));
         } else {
             return json([
                 'value' => false,
@@ -85,7 +125,6 @@ class Admin extends Common
                 ]
             ]);
         }
-
     }
 
 }

@@ -10,15 +10,11 @@ namespace app\common\controller;
 
 use app\admin\model\Admin;
 use \Firebase\JWT\JWT;
+use think\Request;
 
 class Token
 {
     private static $key = "Keepao2018";
-
-    public function __construct($aId, $iat, $exp)
-    {
-
-    }
 
     /**
      * Function: get_token
@@ -76,12 +72,10 @@ class Token
     {
         $token = Token::encode_token_admin($_token, md5(Token::$key), array('HS256'));
 
-
         if (is_array($token)) {
             return $token;
         }
-
-        if ($token->aId != '1')
+        if ($token->aId != session('sId'))
         {
             return [
                 'value' => false,
@@ -90,7 +84,6 @@ class Token
                 ]
             ];
         }
-
         //dump(date('Y-m-d h-i-s', $token->exp));
 
         return [
@@ -101,9 +94,22 @@ class Token
         ];
     }
 
+    /**
+     * Function: refresh_token
+     * Description: 刷新access_token
+     * Author  : wry
+     * DateTime: 18/1/11 上午11:21
+     *
+     * @param $refresh_token
+     *
+     * @return array|object|\think\response\Json
+     * @throws \think\exception\DbException
+     */
     public static function refresh_token($refresh_token)
     {
+        //dump(session('sId'));
         $token = Token::encode_token_admin($refresh_token, md5(Token::$key), array('HS256'));
+        //dump($token);
         if (is_array($token)) {
             return $token;
         }
@@ -118,6 +124,7 @@ class Token
             ];
         }
 
+        //dump(date('Y-m-d h-i-s', $token->exp));
         $admin = Admin::get([
             'sId' =>  $token->aId,
             'key' => $token->psd
@@ -132,18 +139,18 @@ class Token
             ];
         }
 
-        try{
-            $admin->key = Token::create_key(6);
-            $admin->save();
-        } catch (Exception $exception)
-        {
-            return json([
-                'value' => false,
-                'data' => [
-                    'message' => $exception
-                ]
-            ]);
-        }
+//        try{
+//            $admin->key = Token::create_key(6);
+//            $admin->save();
+//        } catch (Exception $exception)
+//        {
+//            return json([
+//                'value' => false,
+//                'data' => [
+//                    'message' => $exception
+//                ]
+//            ]);
+//        }
 
         $iat = strtotime('now');
         $exp = strtotime("+1 day", $iat);
