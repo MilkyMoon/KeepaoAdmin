@@ -37,14 +37,27 @@ class User extends Common {
         return result_array(['data' => $data]);
     }
 
+    /**
+     * Function: update_user
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * 更新用户信息
+     *
+     * @return \think\response\Json
+     */
     public function update_user(){
         $user = new model\User();
         $param = $this->param;
 
-        $param['modifyUser'] = $param['uId'];
+        if(!$param['uid']){
+            return result_array(['error' => '没有用户id']);
+        }
+
+        $param['modifyUser'] = $param['uid'];
         $param['modifyTime'] = date("Y-m-d H:i:s");
 
-        $data = $user->updateDataById($param,$param['uId']);
+        $data = $user->updateDataById($param,$param['ud']);
 
         if (!$data){
             return result_array(['error' => $user->getError()]);
@@ -53,14 +66,16 @@ class User extends Common {
         return result_array(['data' => $data]);
     }
 
-    public function del_user(){
-
-    }
-
     public function find_user(){
         $user = new model\User();
         $param = $this->param;
 
         $data = $user->findUser($param);
+
+        if (!$data){
+            return result_array(['error' => '未找到用户']);
+        }
+
+        return result_array(['data' => $data]);
     }
 }

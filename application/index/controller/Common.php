@@ -15,26 +15,29 @@ use think\Request;
 
 class Common extends \app\common\controller\Common {
     public $param;
+    public $header;
     public function _initialize(){
         parent::_initialize();
 
-        $param =  Request::instance()->param();
+        $param  =  Request::instance()->param();
+        $header = Request::instance()->header();
+        $this->header = $header;
         $this->param = $param;
     }
 
     protected $beforeActionList = [
         //需要验证请求是否合法的方法
-        'first'  =>  ['only'=>'select,details']
+        'first'  =>  ['only'=>'update_user,find_user,details']
     ];
 
     //判断请求是否合法
     protected function first(){
-        $param = $this->param;
+        $header = $this->header;
 
-        $token = !empty($param['token']) ? $param['token'] : '';
+        $token = !empty($header['token']) ? $header['token'] : '';
         $data = '';
         if ($token){
-            $data = Token::encode_token_user($param['token']);
+            $data = Token::encode_token_user($header['token']);
         }
 
         if (!$data){

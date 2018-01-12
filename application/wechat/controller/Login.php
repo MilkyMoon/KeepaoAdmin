@@ -49,13 +49,19 @@ class Login extends Common {
         $param['openId'] = $original['openid'];
         $user = $userModel->findUser($param);
 
-        if (!$user){
+        if (!$user){  //第一次授权时将用户天骄到数据库
             $param['openId']  = $original['openid'];
             $param['gender']  = $original['sex'];
             $param['heading'] = $original['headimgurl'];
             $param['name']    = $original['nickname'];
 
             $user = $userModel->addUser($param);
+
+            if (!$user){
+                return result_array(['error' => $userModel->getError()]);
+            }
+        } else { //用户已经授权过的，查询用户信息，始终保证前端获取到的是最新信息
+            $user = $userModel->findUser($param);
 
             if (!$user){
                 return result_array(['error' => $userModel->getError()]);
@@ -73,7 +79,4 @@ class Login extends Common {
         return result_array(['data' => $data]);
     }
 
-    public function relogin(){
-
-    }
 }

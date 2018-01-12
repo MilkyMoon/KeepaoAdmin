@@ -22,7 +22,7 @@ class Store extends Common {
      * @param   page  [int]             当前页数
      * @param   limit [int]             每页数量
      */
-    public function select(){
+    public function store_select(){
         $store = new model\Store();
 
         $param = $this->param;

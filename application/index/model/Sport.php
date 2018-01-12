@@ -42,7 +42,6 @@ class Sport extends Common{
                 ->join('__USER__ user','sport.useId = user.uId','LEFT');
 //                ->join('__ZAN__ zan','sport.spoId = zan.spoId','LEFT');
 
-
         // 若有分页
         if ($page && $limit) {
             $list = $list->page($page, $limit);
@@ -50,7 +49,6 @@ class Sport extends Common{
 
         $list = $list->field('(@i:=@i+1) seniority,sport.*,user.*')->order('calorie desc');
 //        count(DISTINCT zan.createUser) as num
-
 
         $list = $list->select();
 
@@ -71,11 +69,10 @@ class Sport extends Common{
 
         }
 
-
-
         $data['list'] = $list;
         $data['dataCount'] = $dataCount;
 
         return $data;
     }
+
 }

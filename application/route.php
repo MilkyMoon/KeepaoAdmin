@@ -62,9 +62,12 @@ return [
     // 【前台】修改用户
     'index/user/update' => ['index/user/update_user', ['method' => 'POST']],
 
+    // 【前台】查询排行榜
+    'index/chart/select' => ['index/chart/chart_select', ['method' => 'POST']],
+    'index/chart/user' => ['index/chart/user_select', ['method' => 'POST']],
 
     // 【前台】附近门店获取
-    'index/store/select' => ['index/store/select', ['method' => 'GET']],
+    'index/store/select' => ['index/store/store_select', ['method' => 'GET']],
     // 【前台】门店搜索
     'index/store/search' => ['index/store/search', ['method' => 'GET']],
 

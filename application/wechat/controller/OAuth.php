@@ -13,38 +13,7 @@ use think\Session;
 
 
 class OAuth extends Common {
-    /**
-     * Function: index
-     * Author  : PengZong
-     * DateTime: ${DATE}
-     *
-     * 请求授权
-     *
-     * @return $this
-     */
-    public function index(){
-        $conf= config("wechat");
-        $app = new Application($conf);
-
-        $oauth = $app->oauth;
-
-        // 未登录
-        if (empty(Session::get('wechat_user'))) {
-            Session::set('target_url', '/index.php/index/oauth/index');    //session请求地址
-            // return $oauth->redirect();
-            // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
-            $oauth->redirect()->send();
-            //$response = $app->oauth->scopes(['snsapi_userinfo'])->redirect();
-        }
-
-        // 已经登录过
-        $user=Session::get('wechat_user');
-
-        dump($user);die();  //打印用户信息
-        return $user;
-    }
-
-    /**
+        /**
      * Function: oauth_callback
      * Author  : PengZong
      * DateTime: ${DATE} ${TIME}

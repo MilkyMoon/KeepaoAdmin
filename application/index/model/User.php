@@ -25,8 +25,8 @@ class User extends Common {
     public function findUser($param) {
         if (isset($param['openId'])) {
             return $this->where('openId', $param['openId'])->find();
-        } else if (isset($param['id'])) {
-            return $this->where('id', $param['id'])->find();
+        } else if (isset($param['uid'])) {
+            return $this->where('uId', $param['uid'])->find();
         } else if (isset($param['phone'])) {
             return $this->where('phone', $param['phone'])->find();
         } else {
