@@ -43,19 +43,6 @@ class Role extends Common
 
     public function add(Request $request)
     {
-        if ($request->isGet()) {
-            if (!session('?csrf')) {
-                $csrf = $request->token();
-                session('csrf', $csrf);
-            }
-            return json([
-                'value' => true,
-                'data' => [
-                    'message' => '返回csrf',
-                    'csrf' => session('csrf')
-                ]
-            ]);
-        }
         if ($request->isPost())
         {
             if (!$request->has('csrf', 'header', true) || $request->header('csrf') != session('csrf'))
@@ -67,7 +54,7 @@ class Role extends Common
                     ]
                 ]);
             }
-            session('csrf', $request->token());
+            session('csrf', md5($_SERVER['REQUEST_TIME_FLOAT']));
 
             return json($this->role->add($request->param()));
         }
@@ -90,5 +77,20 @@ class Role extends Common
                 ]
             ]);
         }
+    }
+
+    public function getper(Request $request)
+    {
+        if ($request->has('rId', 'param', true)) {
+            return json($this->role->getper($request->param('rId')));
+        } else {
+            return json([
+                'value' => false,
+                'data' => [
+                    'message' => '缺少角色Id'
+                ]
+            ]);
+        }
+
     }
 }

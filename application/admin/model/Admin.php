@@ -312,6 +312,35 @@ class Admin extends Model
                 'message' => $msg
             ]
         ];
+    }
 
+    public function getrole($aId)
+    {
+        $admin = Admin::get($aId);
+        if (is_null($admin)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '用户不存在'
+                ]
+            ];
+        }
+        //dump($admin->roles());
+        $roles = [];
+        foreach ($admin->roles as $role) {
+            if ($role->getData($role->getStateStr())) {
+                array_push($roles,[
+                    'sId' => $role->getData('sId'),
+                    'name' => $role->getData('name')
+                ]);
+            }
+        }
+        return [
+            'value' => true,
+            'data' => [
+                'message' => '查询成功',
+                'data' => $roles
+            ]
+        ];
     }
 }

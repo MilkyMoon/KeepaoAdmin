@@ -24,6 +24,7 @@
     'admin/select' => ['admin/admin/select', ['method' => 'get']],
     'admin/delete' => ['admin/admin/delete', ['method' => 'post']],
     'admin/update' => ['admin/admin/update', ['method' => 'post']],
+    'admin/getrole' => ['admin/admin/getrole', ['method' => 'get']],
     'admin/addrole' => ['admin/urlink/add'],
 
     //后台角色
@@ -31,6 +32,8 @@
     'role/select' => ['admin/role/select', ['method' => 'get']],
     'role/delete' => ['admin/role/delete', ['method' => 'post']],
     'role/update' => ['admin/role/update', ['method' => 'post']],
+    'role/getper' => ['admin/role/getper', ['method' => 'get']],
+    'role/addper' => ['admin/prlink/add'],
 
     //后台权限
     'permission/select' => ['admin/permission/select', ['method' => 'get']],

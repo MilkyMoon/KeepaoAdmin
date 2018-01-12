@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: wry
  * Date: 18/1/12
- * Time: 上午1:25
+ * Time: 下午3:40
  */
 
 namespace app\admin\controller;
@@ -11,19 +11,18 @@ namespace app\admin\controller;
 
 use think\Request;
 
-class Urlink extends Common
+class Prlink extends Common
 {
-    private $urlink;
-
+    private $prlink;
     public function __construct(Request $request = null)
     {
         parent::__construct($request);
-
-        $this->urlink = new \app\admin\model\Urlink();
+        $this->prlink = new \app\admin\model\Prlink();
     }
 
     public function add(Request $request)
     {
+
         if ($request->isPost())
         {
             if (!$request->has('csrf', 'header', true) || $request->header('csrf') != session('csrf'))
@@ -35,19 +34,19 @@ class Urlink extends Common
                     ]
                 ]);
             }
-            session('csrf', md5($_SERVER['REQUEST_TIME_FLOAT']));
+            //session('csrf', md5($_SERVER['REQUEST_TIME_FLOAT']));
 
-            if (!$request->has('aId', 'param', true))
+            if (!$request->has('rId', 'param', true))
             {
                 return json([
                     'value' => false,
                     'data'  => [
-                        'message' => '管理员Id不能为空'
+                        'message' => '角色Id不能为空'
                     ]
                 ]);
             }
 
-            if (!$request->has('roles', 'param', true))
+            if (!$request->has('permissions', 'param', true))
             {
                 return json([
                     'value' => false,
@@ -56,7 +55,7 @@ class Urlink extends Common
                     ]
                 ]);
             }
-            return json($this->urlink->add($request->param('aId'), $request->param('roles')));
+            return json($this->prlink->add($request->param('rId'), $request->param('permissions')));
         }
     }
 
