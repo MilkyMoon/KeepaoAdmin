@@ -22,6 +22,18 @@ class Chart extends Common {
         $chart = new Sport();
         $param = $this->param;
 
+        $date  = !empty($param['date']) ? $param['date'] : date('Y-m-d',strtotime('now'));
+        $uid   = !empty($param['uid']) ? $param['uid'] : '';
+        $sid   = !empty($param['sid']) ? $param['sid'] : '';
+        $page  = !empty($param['page']) ? $param['page'] : '';
+        $limit = !empty($param['limit']) ? $param['limit'] : '';
 
+        $data = $chart->getChartList($date,$uid,$sid,$page,$limit);
+
+        if (!$data){
+            return result_array(['erroe' => $chart->getError()]);
+        }
+
+        return result_array(['data' => $data]);
     }
 }
