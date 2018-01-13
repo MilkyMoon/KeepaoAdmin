@@ -192,18 +192,5 @@ class Behavior
         ]);
     }
 
-    public function getcsrf()
-    {
-        if (!session('?csrf')) {
-            $csrf = md5($_SERVER['REQUEST_TIME_FLOAT']);
-            session('csrf', $csrf);
-        }
-        return json([
-            'value' => true,
-            'data' => [
-                'message' => '返回csrf',
-                'csrf' => session('csrf')
-            ]
-        ]);
-    }
+
 }

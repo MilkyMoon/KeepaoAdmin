@@ -17,10 +17,11 @@
     'register' => ['admin/behavior/register'],
     //刷新Token
     'refresh' => ['admin/behavior/refresh', ['method' => 'get']],
-    'first' => ['admin/admin/first'],
+    //获取表单令牌
+    'getcsrf' => ['admin/common/getcsrf', ['method' => 'get']],
 
     //后台管理员
-    'admin/add' => ['admin/admin/add'],
+    'admin/add' => ['admin/admin/add', ['method' => 'post']],
     'admin/select' => ['admin/admin/select', ['method' => 'get']],
     'admin/delete' => ['admin/admin/delete', ['method' => 'post']],
     'admin/update' => ['admin/admin/update', ['method' => 'post']],
@@ -28,7 +29,7 @@
     'admin/addrole' => ['admin/urlink/add'],
 
     //后台角色
-    'role/add' => ['admin/role/add'],
+    'role/add' => ['admin/role/add', ['method' => 'post']],
     'role/select' => ['admin/role/select', ['method' => 'get']],
     'role/delete' => ['admin/role/delete', ['method' => 'post']],
     'role/update' => ['admin/role/update', ['method' => 'post']],
@@ -37,6 +38,12 @@
 
     //后台权限
     'permission/select' => ['admin/permission/select', ['method' => 'get']],
+
+    //1:平台信息，2:常见问题，3:门店配置
+    'config/add' => ['admin/config/add', ['method' => 'post']],
+    'config/select' => ['admin/config/select', ['method' => 'get']],
+    'config/delete' => ['admin/config/delete', ['method' => 'post']],
+    'config/update' => ['admin/config/update', ['method' => 'post']],
 
 //    '__miss__' => 'admin/behavior/miss',
 ]);
