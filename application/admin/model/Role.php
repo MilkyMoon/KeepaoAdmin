@@ -164,12 +164,14 @@ class Role extends Model
             return [
                 'value' => false,
                 'data' => [
-                    'message' => '删除条件不能为空'
+                    'message' => '删除参数不能为空'
                 ]
             ];
         }
-        dump($data);
+        //dump($data);
         $arr = explode(',', $data);
+        $arr = array_unique($arr);
+        $arr = array_filter($arr);
         foreach ($arr as $a) {
             $tmp = Urlink::get([
                 'rId' => $a
@@ -212,7 +214,7 @@ class Role extends Model
 
     public function renew($data)
     {
-        if (!isset($data['sId']))
+        if (!isset($data['sId']) || empty($data['sId']))
         {
             return [
                 'value' => false,
@@ -229,7 +231,7 @@ class Role extends Model
                 return [
                     'value' => false,
                     'data'  => [
-                        'message' => '帐户已存在'
+                        'message' => '角色已存在'
                     ]
                 ];
             }
@@ -238,7 +240,7 @@ class Role extends Model
         $data['modifyUser'] = session('sId');
         $data['modifyType'] = 2;
 
-        $result = $role->validate(true)->allowField(true)->isUpdate(true)->save($data);
+        $result = $role->allowField(true)->isUpdate(true)->save($data);
         $flag = true;
         //dump($role);
         $msg = '更新成功';
@@ -250,7 +252,8 @@ class Role extends Model
         return [
             'value' => $flag,
             'data' => [
-                'message' => $msg
+                'message' => $msg,
+
             ]
         ];
 
@@ -258,6 +261,15 @@ class Role extends Model
 
     public function getper($rId)
     {
+        if (empty($rId)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '角色Id不能为空'
+                ]
+            ];
+        }
+
         $role = Role::get($rId);
         if (is_null($role)) {
             return [

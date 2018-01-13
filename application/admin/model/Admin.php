@@ -140,7 +140,7 @@ class Admin extends Model
         $msg = '没有找到数据';
         if ($admin->count() > 0) {
             $flag = true;
-            $msg = '';
+            $msg = '查询成功';
         }
         return [
             'value' => $flag,
@@ -235,7 +235,7 @@ class Admin extends Model
             return [
                 'value' => false,
                 'data' => [
-                    'message' => '删除条件不能为空'
+                    'message' => '删除参数不能为空'
                 ]
             ];
         }
@@ -243,6 +243,9 @@ class Admin extends Model
         Db::startTrans();
         try {
             $arr = explode(",", $data);
+            $arr = array_unique($arr);
+            $arr = array_filter($arr);
+
             Db::table('admin')->delete($arr);
             foreach ($arr as $a) {
                 Db::table('urlink')->where(['aId' => (int)$a])->delete();
@@ -267,7 +270,7 @@ class Admin extends Model
 
     public function renew($data)
     {
-        if (!isset($data['sId']))
+        if (!isset($data['sId']) || empty($data['sId']))
         {
             return [
                 'value' => false,
@@ -298,7 +301,7 @@ class Admin extends Model
         $data['modifyUser'] = session('sId');
         $data['modifyType'] = 2;
 
-        $result = $admin->validate(true)->allowField(true)->isUpdate(true)->save($data);
+        $result = $admin->allowField(true)->isUpdate(true)->save($data);
         $flag = true;
         $msg = '更新成功';
         if (false == $result) {
@@ -316,6 +319,16 @@ class Admin extends Model
 
     public function getrole($aId)
     {
+
+        if (empty($aId)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '管理员Id不能为空'
+                ]
+            ];
+        }
+
         $admin = Admin::get($aId);
         if (is_null($admin)) {
             return [

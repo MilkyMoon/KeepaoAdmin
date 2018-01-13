@@ -31,8 +31,18 @@ class Urlink extends Pivot
             ];
         }
 
+        if (empty($roles)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '角色字符串不能为空'
+                ]
+            ];
+        }
+
         $arr = explode(',', $roles);
         $arr = array_unique($arr);
+        $arr = array_filter($arr);
 //        foreach ($arr as $a) {
 //            $tmp = Role::get($a);
 //            if (is_null($tmp)) {

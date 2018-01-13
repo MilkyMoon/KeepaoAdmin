@@ -23,9 +23,17 @@ class Prlink extends Pivot
                 ]
             ];
         }
-
+        if (empty($permisssions)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '权限字符串不能为空'
+                ]
+            ];
+        }
         $arr = explode(',', $permisssions);
         $arr = array_unique($arr);
+        $arr = array_filter($arr);
         //判读权限是否在数据库中
         $count = Db::table('permission')->where('sId', 'in', $arr)->count();
         if (Count($arr) != $count) {
