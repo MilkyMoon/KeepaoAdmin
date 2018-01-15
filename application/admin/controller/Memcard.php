@@ -2,23 +2,22 @@
 /**
  * Created by PhpStorm.
  * User: wry
- * Date: 18/1/11
- * Time: 上午11:26
+ * Date: 18/1/15
+ * Time: 下午4:58
  */
 
 namespace app\admin\controller;
 
-
 use think\Request;
 
-class Role extends Common
+class Memcard extends Common
 {
-    private $role;
+    private $memcard;
 
     public function __construct(Request $request = null)
     {
         parent::__construct($request);
-        $this->role = new \app\admin\model\Role();
+        $this->memcard = new \app\admin\model\Memcard();
     }
 
     public function selectByName(Request $request)
@@ -28,11 +27,11 @@ class Role extends Common
             if ($request->has('page', 'param', true)) {
                 $page = $request->param('page');
                 if ($request->has('limit', 'param', true)) {
-                    return json($this->role->select($name, $page, $request->param('limit')));
+                    return json($this->memcard->select($name, $page, $request->param('limit')));
                 }
-                return json($this->role->select($name, $page));
+                return json($this->memcard->select($name, $page));
             }
-            return json($this->role->select($name));
+            return json($this->memcard->select($name));
         } else {
             return json([
                 'value' => false,
@@ -48,63 +47,45 @@ class Role extends Common
         if ($request->has('page', 'param', true)) {
             $page = $request->param('page');
             if ($request->has('limit', 'param', true)) {
-                return json($this->role->select('', $page, $request->param('limit')));
+                return json($this->memcard->select('', $page, $request->param('limit')));
             }
-            return json($this->role->select('', $page));
+            return json($this->memcard->select('', $page));
         }
-        return json($this->role->select(''));
+        return json($this->memcard->select(''));
     }
 
     public function add(Request $request)
     {
-        if ($request->isPost())
-        {
-            if (!$request->has('csrf', 'header', true) || $request->header('csrf') != session('csrf'))
-            {
+        if ($request->isPost()) {
+            if (!$request->has('csrf', 'header', true) || $request->header('csrf') != session('csrf')) {
                 return json([
                     'value' => false,
-                    'data'  => [
+                    'data' => [
                         'message' => '请不要重复提交数据',
                     ]
                 ]);
             }
             session('csrf', md5($_SERVER['REQUEST_TIME_FLOAT']));
-
-            return json($this->role->add($request->param()));
+            return json($this->memcard->add($request->param()));
         }
-    }
-
-    public function update(Request $request)
-    {
-        return json($this->role->renew($request->param()));
     }
 
     public function delete(Request $request)
     {
         if ($request->has('del', 'param', true)) {
-            return json($this->role->del($request->param('del')));
+            return json($this->memcard->del($request->param('del')));
         } else {
             return json([
                 'value' => false,
                 'data' => [
-                    'message' => '缺少删除参数'
+                    'message' => '删除参数不能为空'
                 ]
             ]);
         }
     }
 
-    public function getper(Request $request)
+    public function update(Request $request)
     {
-        if ($request->has('rId', 'param', true)) {
-            return json($this->role->getper($request->param('rId')));
-        } else {
-            return json([
-                'value' => false,
-                'data' => [
-                    'message' => '缺少角色Id'
-                ]
-            ]);
-        }
-
+        return json($this->memcard->renew($request->param()));
     }
 }

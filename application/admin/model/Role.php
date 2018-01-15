@@ -62,12 +62,12 @@ class Role extends Model
     }
 
 
-    public function select($name, $page = 1)
+    public function select($name, $page = 1, $limit = 10)
     {
         if (!empty($name))
-            $role = Role::where('name', 'like', '%'.$name.'%')->order('state,sort')->paginate(10, false, ['page' => $page]);
+            $role = Role::where('name', 'like', '%'.$name.'%')->order('state,sort')->paginate($limit, false, ['page' => $page]);
         else
-            $role = Role::order('state')->paginate(10, false, ['page' => $page]);
+            $role = Role::order('state')->paginate($limit, false, ['page' => $page]);
         $flag = false;
         $msg = '没找到数据';
         if ($role->count() > 0) {
