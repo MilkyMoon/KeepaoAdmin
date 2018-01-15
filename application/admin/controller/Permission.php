@@ -21,23 +21,37 @@ class Permission extends Common
         $this->permission = new \app\admin\model\Permission();
     }
 
-    public function select(Request $request)
+    public function selectByName(Request $request)
+    {
+        if ($request->has('name', 'param', true)) {
+            $name = $request->param('name');
+            if ($request->has('page', 'param', true)) {
+                $page = $request->param('page');
+                if ($request->has('limit', 'param', true)) {
+                    return json($this->permission->select($name, $page, $request->param('limit')));
+                }
+                return json($this->permission->select($name, $page));
+            }
+            return json($this->permission->select($name));
+        } else {
+            return json([
+                'value' => false,
+                'data' => [
+                    'message' => 'name参数不能为空'
+                ]
+            ]);
+        }
+    }
+
+    public function selectAll(Request $request)
     {
         if ($request->has('page', 'param', true)) {
             $page = $request->param('page');
-            if ($request->has('name', 'param', true)) {
-                $name = $request->param('name');
-                return json($this->permission->select($name, $page));
-            } else {
-                return json($this->permission->select('', $page));
+            if ($request->has('limit', 'param', true)) {
+                return json($this->permission->select('', $page, $request->param('limit')));
             }
-        } else {
-            if ($request->has('name', 'param', true)) {
-                $name = $request->param('name');
-                return json($this->permission->select($name));
-            } else {
-                return json($this->permission->select(''));
-            }
+            return json($this->permission->select('', $page));
         }
+        return json($this->permission->select(''));
     }
 }

@@ -130,12 +130,12 @@ class Admin extends Model
         ];
     }
 
-    public function select($account, $page = 1)
+    public function select($account, $page = 1, $limit = 10)
     {
         if (!empty($account))
-            $admin = Admin::where('account', 'like', '%'.$account.'%')->order('state')->paginate(10, false, ['page' => $page]);
+            $admin = Admin::where('account', 'like', '%'.$account.'%')->order('state')->paginate($limit, false, ['page' => $page]);
         else
-            $admin = Admin::order('state')->paginate(10, false, ['page' => $page]);
+            $admin = Admin::order('state')->paginate($limit, false, ['page' => $page]);
         $flag = false;
         $msg = '没有找到数据';
         if ($admin->count() > 0) {

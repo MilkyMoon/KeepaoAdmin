@@ -22,7 +22,8 @@
 
     //后台管理员
     'admin/add' => ['admin/admin/add', ['method' => 'post']],
-    'admin/select' => ['admin/admin/select', ['method' => 'get']],
+    'admin/selectAll' => ['admin/admin/selectAll', ['method' => 'get']],
+    'admin/selectByName' => ['admin/admin/selectByName', ['method' => 'get']],
     'admin/delete' => ['admin/admin/delete', ['method' => 'post']],
     'admin/update' => ['admin/admin/update', ['method' => 'post']],
     'admin/getrole' => ['admin/admin/getrole', ['method' => 'get']],
@@ -30,20 +31,37 @@
 
     //后台角色
     'role/add' => ['admin/role/add', ['method' => 'post']],
-    'role/select' => ['admin/role/select', ['method' => 'get']],
+    'role/selectAll' => ['admin/role/selectAll', ['method' => 'get']],
+    'role/selectByName' => ['admin/role/selectByName', ['method' => 'get']],
     'role/delete' => ['admin/role/delete', ['method' => 'post']],
     'role/update' => ['admin/role/update', ['method' => 'post']],
     'role/getper' => ['admin/role/getper', ['method' => 'get']],
     'role/addper' => ['admin/prlink/add'],
 
     //后台权限
-    'permission/select' => ['admin/permission/select', ['method' => 'get']],
+    'permission/selectAll' => ['admin/permission/selectAll', ['method' => 'get']],
+    'permission/selectByName' => ['admin/permission/selectByName', ['method' => 'get']],
 
     //1:平台信息，2:常见问题，3:门店配置
     'config/add' => ['admin/config/add', ['method' => 'post']],
-    'config/select' => ['admin/config/select', ['method' => 'get']],
+    'config/selectAll' => ['admin/config/selectAll', ['method' => 'get']],
+    'config/selectByName' => ['admin/config/selectByName', ['method' => 'get']],
     'config/delete' => ['admin/config/delete', ['method' => 'post']],
     'config/update' => ['admin/config/update', ['method' => 'post']],
+
+    //积分规则
+    'prule/selectAll' => ['admin/pointRule/selectAll', ['method' => 'get']],
+    'prules/add' => ['admin/pointRuleDet/add', ['method' => 'post']],
+    'prules/selectAll' => ['admin/pointRuleDet/selectAll', ['method' => 'get']],
+    'prules/delete' => ['admin/pointRuleDet/delete', ['method' => 'post']],
+    'prules/update' => ['admin/pointRuleDet/update', ['method' => 'post']],
+
+    //会员卡
+    'memcard/add' => ['admin/memcard/add', ['method' => 'post']],
+    'memcard/selectAll' => ['admin/memcard/selectAll', ['method' => 'get']],
+    'memcard/selectByName' => ['admin/memcard/selectByName', ['method' => 'get']],
+    'memcard/delete' => ['admin/memcard/delete', ['method' => 'post']],
+    'memcard/update' => ['admin/memcard/update', ['method' => 'post']],
 
 //    '__miss__' => 'admin/behavior/miss',
 ]);

@@ -77,11 +77,23 @@ class Config extends Model
                 ]
             ];
         }
-        dump($data);
+        //dump($data);
         $arr = explode(",", $data);
         $arr = array_unique($arr);
         $arr = array_filter($arr);
-        Config::destroy($data);
+        Db::startTrans();
+        try {
+            Db::table('config')->delete($arr);
+            Db::table('sto_con')->where('conId', 'in', $arr)->delete();
+        }  catch (\Exception $e) {
+            Db::rollback();
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '删除失败'
+                ]
+            ];
+        }
         return [
             'value' => true,
             'data' => [
@@ -111,7 +123,7 @@ class Config extends Model
         $msg = '更新成功';
         if (false == $result) {
             $flag = false;
-            $msg = '更新失败';
+            $msg = $config->getError();
         }
         //dump($msg);
         return [
@@ -123,12 +135,12 @@ class Config extends Model
 
      }
 
-    public function select($name, $type, $page = 1)
+    public function select($type, $name, $page = 1, $limit = 10)
     {
         if (!empty($name))
-            $config = Config::where('name', 'like', '%'.$name.'%')->where('type', $type)->order('state')->paginate(10, false, ['page' => $page]);
+            $config = Config::where('name', 'like', '%'.$name.'%')->where('type', $type)->order('state')->paginate($limit, false, ['page' => $page]);
         else
-            $config = Config::where('type', $type)->order('state')->paginate(10, false, ['page' => $page]);
+            $config = Config::where('type', $type)->order('state')->paginate($limit, false, ['page' => $page]);
         $flag = false;
         $msg = '没有找到数据';
         if ($config->count() > 0) {

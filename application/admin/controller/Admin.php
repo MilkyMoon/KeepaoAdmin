@@ -26,24 +26,37 @@ class Admin extends Common
 
     }
 
-    public function select(Request $request)
+    public function selectByAcc(Request $request)
     {
+        if ($request->has('account', 'param', true)) {
+            $account = $request->param('account');
+            if ($request->has('page', 'param', true)) {
+                $page = $request->param('page');
+                if ($request->has('limit', 'param', true)) {
+                    return json($this->admin->select($account, $page, $request->param('limit')));
+                }
+                return json($this->admin->select($account, $page));
+            }
+            return json($this->admin->select($account));
+        } else {
+            return json([
+                'value' => false,
+                'data' => [
+                    'message' => '账号不能为空'
+                ]
+            ]);
+        }
+    }
+
+    public function selectAll(Request $request) {
         if ($request->has('page', 'param', true)) {
             $page = $request->param('page');
-            if ($request->has('account', 'param', true)) {
-                $account = $request->param('account');
-                return json($this->admin->select($account, $page));
-            } else {
-                return json($this->admin->select('', $page));
+            if ($request->has('limit', 'param', true)) {
+                return json($this->admin->select('', $page, $request->param('limit')));
             }
-        } else {
-            if ($request->has('account', 'param', true)) {
-                $account = $request->param('account');
-                return json($this->admin->select($account));
-            } else {
-                return json($this->admin->select(''));
-            }
+            return json($this->admin->select('', $page));
         }
+        return json($this->admin->select(''));
     }
 
     public function add(Request $request)
