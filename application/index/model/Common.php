@@ -22,9 +22,9 @@ class Common extends Model {
      * @param     string                   $id [主键]
      * @return    [array]
      */
-    public function getDataById($id = '')
+    public function getDataById($id = '',$field = '*')
     {
-        $data = $this->get($id);
+        $data = $this->field($field)->where($this->getPk(),$id)->find();
         if (!$data) {
             $this->error = '暂无此数据';
             return false;

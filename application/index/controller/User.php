@@ -57,7 +57,7 @@ class User extends Common {
         $param['modifyUser'] = $param['uid'];
         $param['modifyTime'] = date("Y-m-d H:i:s");
 
-        $data = $user->updateDataById($param,$param['ud']);
+        $data = $user->updateDataById($param,$param['uid']);
 
         if (!$data){
             return result_array(['error' => $user->getError()]);

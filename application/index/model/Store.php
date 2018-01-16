@@ -10,6 +10,8 @@ namespace app\index\model;
 
 
 
+use think\Db;
+
 class Store extends Common{
     /**
      * [getDataList 获取列表]
@@ -37,13 +39,15 @@ class Store extends Common{
 
         //若有经纬度,计算距离排序
         if($lng && $lat){
-            $list = $list->field('*,(2 * 6378.137* ASIN(SQRT(POW(SIN(3.1415926535898*('.$lat.'-latitude)/360),2)+COS(3.1415926535898*'.$lat.'/180)* COS(latitude * 3.1415926535898/180)*POW(SIN(3.1415926535898*('.$lng.'-longitude)/360),2))))*1000 as juli')->order('juli');
+            $list = $list->field('(2 * 6378.137* ASIN(SQRT(POW(SIN(3.1415926535898*('.$lat.'-latitude)/360),2)+COS(3.1415926535898*'.$lat.'/180)* COS(latitude * 3.1415926535898/180)*POW(SIN(3.1415926535898*('.$lng.'-longitude)/360),2))))*1000 as juli')->order('juli');
         }
 
         // 若有分页
         if ($page && $limit) {
             $list = $list->page($page, $limit);
         }
+
+        $list = $list->field('stoId,admId,stoname,county,province,city,address,state,longitude,latitude,isdirect');
 
         $list = $list->select();
 
@@ -53,5 +57,62 @@ class Store extends Common{
         $data['dataCount'] = $dataCount;
 
         return $data;
+    }
+
+    /**
+     * Function: getStoreDevices
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * 门店设备
+     *
+     * @param $sid
+     */
+    public function getStoreDevices($sid){
+        if(!$sid){
+            $this->error = '找不到门店设备';
+            return false;
+        }
+
+        $map['stoId'] = $sid;
+
+        $list = Db::table('sto_equ')->alias('stoequ')
+            ->where($map)
+            ->join('__EQUIPMENT__ equipment','sto_equ.equ = equipment.equId','LEFT');
+
+        $list = $list->field('equipment.equId,equipment.type,equipment.name,equipment.remark');
+
+        $list = $list->select();
+
+        return $list;
+    }
+
+    /**
+     * Function: getStoreDevices
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * 门店配置
+     *
+     * @param $sid
+     */
+    public function getStoreConfig($sid){
+        if(!$sid){
+            $this->error = '找不到门店配置';
+            return false;
+        }
+
+        $map['stoId'] = $sid;
+
+        $list = Db::table('sto_con')->alias('stocon')
+            ->where('stocon.stoId',$sid)
+            ->where('config.type',3)
+            ->join('__CONFIG__ config','stocon.conId = config.conId','LEFT');
+
+        $list = $list->field('config.conId,config.type,config.name,config.value,config.state,config.isDefault');
+
+        $list = $list->select();
+
+        return $list;
     }
 }

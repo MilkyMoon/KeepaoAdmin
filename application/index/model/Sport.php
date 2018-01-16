@@ -47,7 +47,7 @@ class Sport extends Common{
             $list = $list->page($page, $limit);
         }
 
-        $list = $list->field('(@i:=@i+1) seniority,sport.*,user.*')->order('calorie desc');
+        $list = $list->field('(@i:=@i+1) seniority,sport.spoId,sport.stoId,sport.equId,sport.calorie,user.name,user.heading,user.uId')->order('calorie desc');
 //        count(DISTINCT zan.createUser) as num
 
         $list = $list->select();

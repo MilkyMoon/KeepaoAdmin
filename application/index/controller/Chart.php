@@ -62,7 +62,7 @@ class Chart extends Common {
 
         foreach ($data['list'] as $item){
 //            print_r($data);
-            if($uid == $item['useId']){
+            if($uid == $item['uId']){
                 $data = $item;
                 break;
             }
