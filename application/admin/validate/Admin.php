@@ -16,11 +16,13 @@ class Admin extends Validate
     protected $rule = [
         'account'  =>  'require',
         'password' =>  'require',
+        'type' => 'require',
     ];
 
     protected $message = [
         'account.require'  =>  '帐户不能为空',
         'password.require' =>  '密码不能为空',
+        'type.require' =>  '管理员类型不能为空',
     ];
 
 }

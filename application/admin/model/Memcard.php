@@ -135,6 +135,8 @@ class Memcard extends Model
         }
 
         $mem = new Memcard;
+        $data['modifyUser'] = session('sId');
+        $data['modifyType'] = 2;
         $result = $mem->validate(true)->allowField(true)->isUpdate(true)->save($data);
 
         if (false == $result) {

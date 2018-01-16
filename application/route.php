@@ -63,6 +63,12 @@
     'memcard/delete' => ['admin/memcard/delete', ['method' => 'post']],
     'memcard/update' => ['admin/memcard/update', ['method' => 'post']],
 
+    //优惠券
+    'coupon/add' => ['admin/coupon/add', ['method' => 'post']],
+    'coupon/selectAll' => ['admin/coupon/selectAll', ['method' => 'get']],
+    'coupon/delete' => ['admin/coupon/delete', ['method' => 'post']],
+    'coupon/update' => ['admin/coupon/update', ['method' => 'post']],
+
 //    '__miss__' => 'admin/behavior/miss',
 ]);
 
