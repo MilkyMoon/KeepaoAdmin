@@ -46,8 +46,7 @@ class Common extends Model {
             if (false == $result) {
                 return false;
             }
-            $pk = $this->getPk();
-            return $this->getDataById($this->$pk);
+            return true;
         } catch(\Exception $e) {
             $this->error = '添加失败';
             return false;
@@ -166,6 +165,26 @@ class Common extends Model {
             }
         }
         return $data;
+    }
+
+    /**
+     * Function: updateAddById
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * @param $field        要自增的字段名称
+     * @param $id           主键id
+     * @param $num          +多少
+     */
+    public function updateAddById($field,$id,$num){
+        try{
+            $this->where($this->getPk(),$id)->inc($field,$num)->update();
+            return true;
+        }catch (\Exception $e){
+            $this->error = '数据更新失败';
+            return false;
+        }
+
     }
 
     /**

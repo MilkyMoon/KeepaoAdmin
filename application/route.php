@@ -105,6 +105,12 @@ return [
     // 【前台】查询排行榜
     'index/chart/select' => ['index/chart/chart_select', ['method' => 'POST']],
     'index/chart/user' => ['index/chart/user_select', ['method' => 'POST']],
+    // 【前台】查询一段时间内的运动情况
+    'index/chart/statistics' => ['index/chart/statistics', ['method' => 'GET']],
+
+
+    // 【前台】点赞
+    'index/zan/up' => ['index/zan/thumb_up', ['method' => 'GET']],
 
     // 【前台】附近门店获取
     'index/store/select' => ['index/store/store_select', ['method' => 'GET']],

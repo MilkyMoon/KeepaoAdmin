@@ -74,4 +74,32 @@ class Chart extends Common {
 
         return result_array(['data' => $data]);
     }
+
+    /**
+     * Function: statistics
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * 一时间段之内的所有运动情况
+     */
+    public function statistics(){
+        $sport = new Sport();
+        $param = $this->param;
+
+        $uid     =  !empty($param['uId']) ? $param['uId'] : '';
+        $statime =  !empty($param['statime']) ? date("Y-m-d",strtotime($param['statime'])).'' : '';
+        $endtime =  !empty($param['endtime']) ? date("Y-m-d",strtotime('+1 day',strtotime($param['endtime']))).'' : '';
+
+        if(!$statime || !$endtime || !$uid){
+            return result_array(['error' => '日期与用户id不能为空！']);
+        }
+
+        $data = $sport->getStatistics($statime,$endtime,$uid);
+
+        if(!$data){
+            return result_array(['error' => $sport->getError()]);
+        }
+
+        return result_array(['data' => $data]);
+    }
 }

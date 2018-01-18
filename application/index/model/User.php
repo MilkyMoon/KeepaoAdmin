@@ -17,6 +17,14 @@ class User extends Common {
             return false;
         }
 
+        $param['point']     = 0;     //积分
+        $param['zan']       = 0;     //获赞
+        $param['upZan']     = 0;     //点赞
+        $param['isDeposit'] = 0;     //是否缴纳押金
+        $param['balance']   = 0;     //余额
+        $param['isOpenMes'] = 1;     //是否开启留言
+        $param['state']     = 1;     //状态正常
+
         $data = $this->createData($param);
 
         return $data;
@@ -33,4 +41,5 @@ class User extends Common {
             return false;
         }
     }
+
 }

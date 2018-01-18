@@ -27,8 +27,9 @@ class Common extends \app\common\controller\Common {
 
     protected $beforeActionList = [
         //需要验证请求是否合法的方法
-        'first'  =>  ['only'=>'update_user,find_user,store_details,store_select'],
-        'second' =>  ['only'=>'']
+        'first'  =>  ['only'=>'update_user,find_user,store_details,store_select,statistics'],
+        'second' =>  ['only'=>'thumb_up'],
+        'third'  =>  ['only'=>'']
     ];
 
     //判断请求是否合法
@@ -47,7 +48,39 @@ class Common extends \app\common\controller\Common {
 
     }
 
+    //添加数据的时候默认参数
     public function second(){
+        $param = $this->param;
 
+        $uid = !empty($param['uId']) ? $param['uId'] : '';
+
+        if(!$uid){
+            throw new HttpResponseException(result_array(['error' => '参数错误！']));
+        }
+
+        $param['createUser'] = $param['uId'];
+        $param['createTime'] = date("Y-m-d H:i:s");
+        $param['modifyUser'] = $param['uId'];
+        $param['modifyTime'] = date("Y-m-d H:i:s");
+        $param['createType'] = 1;
+        $param['modifyType'] = 1;
+
+        $this->param = $param;
+    }
+
+    //更新数据的时候默认参数
+    public function third(){
+        $param = $this->param;
+
+        $uid = !empty($param['uId']) ? $param['uId'] : '';
+
+        if(!$uid){
+            throw new HttpResponseException(result_array(['error' => '参数错误！']));
+        }
+
+        $param['modifyUser'] = $param['uId'];
+        $param['modifyTime'] = date("Y-m-d H:i:s");
+
+        $this->param = $param;
     }
 }

@@ -40,7 +40,6 @@ class Sport extends Common{
                 ->where($map)
                 ->whereTime('sport.createTime','between',[$day,$tom])
                 ->join('__USER__ user','sport.useId = user.uId','LEFT');
-//                ->join('__ZAN__ zan','sport.spoId = zan.spoId','LEFT');
 
         // 若有分页
         if ($page && $limit) {
@@ -48,7 +47,6 @@ class Sport extends Common{
         }
 
         $list = $list->field('(@i:=@i+1) seniority,sport.spoId,sport.stoId,sport.equId,sport.calorie,user.name,user.heading,user.uId')->order('calorie desc');
-//        count(DISTINCT zan.createUser) as num
 
         $list = $list->select();
 
@@ -69,6 +67,18 @@ class Sport extends Common{
 
         }
 
+        $data['list'] = $list;
+        $data['dataCount'] = $dataCount;
+
+        return $data;
+    }
+
+    //查询某段时间之内的运动情况
+    public function getStatistics($statime,$endtime,$uid){
+        $list = $this->where('useId',$uid)->whereTime('createTime','between',[$statime,$endtime])->order('createTime');
+        $list = $list->field('spoId,stoId,useId,duration,calorie,date_format(createTime, \'%Y-%m-%d\') as time')->select();
+
+        $dataCount = sizeof($list);
         $data['list'] = $list;
         $data['dataCount'] = $dataCount;
 
