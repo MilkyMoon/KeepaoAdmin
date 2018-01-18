@@ -129,18 +129,18 @@ class Message extends Model
 
     public function select($data, $type, $page = 1, $limit = 10)
     {
+        $message = new Message;
         if (isset($data['title'])) {
-            $result = Message::where('title', 'like', '%'.$data['title'].'%')->where('type', $type)->paginate($limit, false, ['page' => $page]);
-        } else {
-            $result = Message::where('type', $type)->paginate($limit, false, ['page' => $page]);
+            $message = $message->where('title', 'like', '%'.$data['title'].'%');//->where('type', $type)->paginate($limit, false, ['page' => $page]);
         }
+        $message = $message->where('type', $type)->paginate($limit, false, ['page' => $page]);
 
         if ($result->count() > 0) {
             return [
                 'value' => true,
                 'data' => [
                     'message' => '查询成功',
-                    'data' => $result
+                    'data' => $message
                 ]
             ];
         }

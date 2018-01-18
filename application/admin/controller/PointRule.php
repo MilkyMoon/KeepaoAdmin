@@ -20,7 +20,7 @@ class PointRule extends Common
         $this->pointRule = new \app\admin\model\PointRule();
     }
 
-    public function selectAll(Request $request) {
+    public function select(Request $request) {
         if ($request->has('page', 'param', true)) {
             $page = $request->param('page');
             if ($request->has('limit', 'param', true)) {

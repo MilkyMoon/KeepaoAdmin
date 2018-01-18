@@ -53,12 +53,16 @@ class Permission extends Model
         return $status[$value];
     }
 
-    public function select($name, $page = 1, $limit = 10)
+    public function select($data, $page = 1, $limit = 10)
     {
-        if (!empty($name))
-            $permission = Permission::where('name', 'like', '%'.$name.'%')->order('state,sort')->paginate($limit, false, ['page' => $page]);
-        else
-            $permission = Permission::order('state')->paginate($limit, false, ['page' => $page]);
+        $permission = new Permission;
+
+        if (isset($data['name']))
+            $permission = $permission->where('name', 'like', '%'.$data['name'].'%');
+        if (isset($data['state']))
+            $permission = $permission->where('state', $data['state']);
+
+        $permission = $permission->order('sort desc')->paginate($limit, false, ['page' => $page]);
         $flag = false;
         $msg = '没找到数据';
         if ($permission->count() > 0) {

@@ -137,12 +137,12 @@ class Config extends Model
 
      }
 
-    public function select($type, $name, $page = 1, $limit = 10)
+    public function select($type, $data, $page = 1, $limit = 10)
     {
-        if (!empty($name))
-            $config = Config::where('name', 'like', '%'.$name.'%')->where('type', $type)->order('state')->paginate($limit, false, ['page' => $page]);
-        else
-            $config = Config::where('type', $type)->order('state')->paginate($limit, false, ['page' => $page]);
+        $config = new Config;
+        if (isset($data['name']))
+            $config = $config->where('name', 'like', '%'.$data['name'].'%');//->where('type', $type)->order('state')->paginate($limit, false, ['page' => $page]);
+        $config = $config->where('type', $type)->paginate($limit, false, ['page' => $page]);
         $flag = false;
         $msg = '没有找到数据';
         if ($config->count() > 0) {

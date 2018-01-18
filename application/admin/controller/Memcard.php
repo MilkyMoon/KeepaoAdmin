@@ -20,38 +20,21 @@ class Memcard extends Common
         $this->memcard = new \app\admin\model\Memcard();
     }
 
-    public function selectByName(Request $request)
+    public function select(Request $request)
     {
-        if ($request->has('name', 'param', true)) {
-            $name = $request->param('name');
-            if ($request->has('page', 'param', true)) {
-                $page = $request->param('page');
-                if ($request->has('limit', 'param', true)) {
-                    return json($this->memcard->select($name, $page, $request->param('limit')));
-                }
-                return json($this->memcard->select($name, $page));
-            }
-            return json($this->memcard->select($name));
-        } else {
-            return json([
-                'value' => false,
-                'data' => [
-                    'message' => 'name参数不能为空'
-                ]
-            ]);
+        $data = [];
+        if ($request->has('page', 'param', true)) {
+            $data['name'] = $request->param('name');
         }
-    }
 
-    public function selectAll(Request $request)
-    {
         if ($request->has('page', 'param', true)) {
             $page = $request->param('page');
             if ($request->has('limit', 'param', true)) {
-                return json($this->memcard->select('', $page, $request->param('limit')));
+                return json($this->memcard->select($data, $page, $request->param('limit')));
             }
-            return json($this->memcard->select('', $page));
+            return json($this->memcard->select($data, $page));
         }
-        return json($this->memcard->select(''));
+        return json($this->memcard->select($data));
     }
 
     public function add(Request $request)

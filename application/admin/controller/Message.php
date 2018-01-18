@@ -23,15 +23,15 @@ class Message extends Common
     public function add(Request $request)
     {
         if ($request->isPost()) {
-//            if (!$request->has('csrf', 'header', true) || $request->header('csrf') != session('csrf')) {
-//                return json([
-//                    'value' => false,
-//                    'data' => [
-//                        'message' => '请不要重复提交数据',
-//                    ]
-//                ]);
-//            }
-//            session('csrf', md5($_SERVER['REQUEST_TIME_FLOAT']));
+            if (!$request->has('csrf', 'header', true) || $request->header('csrf') != session('csrf')) {
+                return json([
+                    'value' => false,
+                    'data' => [
+                        'message' => '请不要重复提交数据',
+                    ]
+                ]);
+            }
+            session('csrf', md5($_SERVER['REQUEST_TIME_FLOAT']));
             return json($this->message->add($request->param()));
         }
     }
