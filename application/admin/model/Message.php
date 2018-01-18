@@ -2,19 +2,21 @@
 /**
  * Created by PhpStorm.
  * User: wry
- * Date: 18/1/15
- * Time: 下午4:57
+ * Date: 18/1/16
+ * Time: 下午9:36
  */
 
 namespace app\admin\model;
 
 
 use think\Db;
+use think\Exception;
 use think\Model;
 
-class Memcard extends Model
+class Message extends Model
 {
-    protected $pk = 'memId';
+    //设置主键
+    protected $pk = 'mesId';
 
     //设置自动插入生成时间
     protected $createTime = 'createTime';
@@ -25,32 +27,27 @@ class Memcard extends Model
     //添加默认值
     protected $insert = ['state' => 1];
 
+    public function getStateAttr($value)
+    {
+        $status = [1 => '启用', 0 => '注销', null => '未知状态'];
+        return $status[$value];
+    }
+
     public function add($data)
     {
-        if (isset($data['day'])) {
-            if ($this->checkDay($data['day'])) {
-                return [
-                    'value' => false,
-                    'data' => [
-                        'message' => '要修改的天数已存在'
-                    ]
-                ];
-            }
-        }
-
-        $mem = new Memcard;
+        $message = new Message;
         $data['createUser'] = session('sId');
         $data['modifyUser'] = session('sId');
         $data['createType'] = 2;
         $data['modifyType'] = 2;
 
-        $result = $mem->validate(true)->allowField(true)->save($data);
+        $result = $message->validate(true)->allowField(true)->save($data);
 
         if (false == $result) {
             return [
                 'value' => false,
                 'data' => [
-                    'message' => $mem->getError()
+                    'message' => $message->getError()
                 ]
             ];
         }
@@ -61,25 +58,6 @@ class Memcard extends Model
                 'message' => '添加成功'
             ]
         ];
-    }
-
-    private function checkDay($day, $memId = '')
-    {
-        $mem = Memcard::get([
-            'day' => $day
-        ]);
-        $flag = true;
-        if (is_null($mem)) {
-            $flag = false;
-        } else {
-            if (!empty($memId)) {
-                if ($mem->getAttr('memId') == $memId) {
-                    $flag = false;
-                }
-            }
-        }
-
-        return $flag;
     }
 
     public function del($data)
@@ -93,57 +71,50 @@ class Memcard extends Model
             ];
         }
 
-        $count = Db::table('use_mem')->where('memId', 'in', $data)->where('state', 1)->count();
-        if ($count > 0) {
+        Db::startTrans();
+        try {
+            Db::table('message')->where('mesId', 'in', $data)->delete();
+            Db::table('use_mes')->where('mesId', 'in', $data)->delete();
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
             return [
                 'value' => false,
                 'data' => [
-                    'message' => '会员卡正在被使用，不能删除'
+                    'message' => '删除失败'
                 ]
             ];
         }
 
-        Memcard::destroy($data);
         return [
             'value' => true,
-            'data' => [
-                'message' => '删除成功'
+            'data' =>[
+                'messsage' => '删除成功'
             ]
         ];
     }
 
     public function renew($data)
     {
-        if (!isset($data['memId']) || empty($data['memId'])) {
+        if (!isset($data['mesId']) || empty($data['mesId'])) {
             return [
                 'value' => false,
                 'data' => [
-                    'message' => '会员卡Id不能为空'
+                    'message' => 'mesId不能为空'
                 ]
             ];
         }
 
-        if (isset($data['condition'])) {
-            if ($this->checkDay($data['day'], $data['memId'])) {
-                return [
-                    'value' => false,
-                    'data' => [
-                        'message' => '要修改的天数已经存在'
-                    ]
-                ];
-            }
-        }
-
-        $mem = new Memcard;
+        $message = new Message;
         $data['modifyUser'] = session('sId');
         $data['modifyType'] = 2;
-        $result = $mem->validate(true)->allowField(true)->isUpdate(true)->save($data);
 
+        $result = $message->validate(true)->allowField(true)->isUpdate(true)->save($data);
         if (false == $result) {
             return [
                 'value' => false,
                 'data' => [
-                    'message' => $mem->getError()
+                    'message' => $message->getError()
                 ]
             ];
         }
@@ -156,12 +127,12 @@ class Memcard extends Model
         ];
     }
 
-    public function select($name, $page = 1, $limit = 10)
+    public function select($data, $type, $page = 1, $limit = 10)
     {
-        if (!empty($name)) {
-            $result = Memcard::where('name', 'like', '%'.$name.'%')->paginate($limit, false, ['page' => $page]);
+        if (isset($data['title'])) {
+            $result = Message::where('title', 'like', '%'.$data['title'].'%')->where('type', $type)->paginate($limit, false, ['page' => $page]);
         } else {
-            $result = Memcard::paginate($limit, false, ['page' => $page]);
+            $result = Message::where('type', $type)->paginate($limit, false, ['page' => $page]);
         }
 
         if ($result->count() > 0) {

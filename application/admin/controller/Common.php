@@ -19,20 +19,29 @@ class Common extends Controller
 {
     public function __construct(Request $request = null)
     {
-        parent::__construct($request);
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, authKey, sessionId");
         header('Content-Type:text/html; charset=utf-8');
 
-        dump(session('sId'));
+        //dump(session('sId'));
+
+        if (!session('?sId')) {
+            throw new HttpResponseException(json([
+                'value' => false,
+                'data' => [
+                    'message' => '请先登录'
+                ]
+            ]));
+        }
+
         //查看请求是否携带Token
         if (!$request->has('access-token', 'header', true)) {
             throw new HttpResponseException(json([
                 'value' => false,
                 'data' => [
-                    'message' => '非法请求'
+                    'message' => 'token invalid'
                 ]
             ]));
         }
@@ -44,14 +53,14 @@ class Common extends Controller
             throw new HttpResponseException(json([
                 'value' => false,
                 'data' => [
-                    'message' => 'token验证失败'
+                    'message' => 'token invalid'
                 ]
             ]));
         }
 
         //验证权限
         $path = Request::instance()->pathinfo();
-        dump($path);
+        //dump($path);
         $check_auth = $this->checkAuth(session('sId'), $path);
 
         if (!$check_auth['value']) {
@@ -62,6 +71,7 @@ class Common extends Controller
                 ]
             ]));
         }
+        parent::__construct($request);
     }
 
     /**
@@ -124,7 +134,7 @@ class Common extends Controller
             }
 
             $permissions = array_unique($permissions);
-            dump($permissions);
+            //dump($permissions);
             if (in_array($rule, $permissions)) {
                 return [
                     'value' => true,

@@ -15,13 +15,20 @@ use think\Exception;
 use think\exception\HttpResponseException;
 use think\Request;
 
-class Behavior
+class Behavior extends Controller
 {
+    public function __construct(Request $request = null)
+    {
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Credentials: true');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, authKey, sessionId");
+        header('Content-Type:text/html; charset=utf-8');
+    }
 
     public function login()
     {
-
-        if (!Request::instance()->has('account', 'post')) {
+        if (!Request::instance()->has('account', 'param', true)) {
             return json([
                 'value' => false,
                 'data' => [
@@ -30,7 +37,7 @@ class Behavior
             ]);
         }
 
-        if (!Request::instance()->has('password', 'post')) {
+        if (!Request::instance()->has('password', 'param', true)) {
             return json([
                 'value' => false,
                 'data' => [
@@ -44,7 +51,7 @@ class Behavior
 
         $admin = Admin::get([
             'account' => $account,
-            'password' => $password
+            'password' => $password,
         ]);
 
         if (is_null($admin)) {
@@ -52,6 +59,15 @@ class Behavior
                 'value' => false,
                 'data' => [
                     'message' => '用户名或密码错误'
+                ]
+            ]);
+        }
+
+        if ($admin->getData('state') != 2) {
+            return json([
+                'value' => false,
+                'data' => [
+                    'message' => '帐户状态异常'
                 ]
             ]);
         }
@@ -64,7 +80,7 @@ class Behavior
             return json([
                 'value' => false,
                 'data' => [
-                    'message' => $exception
+                    'message' => $exception->getMessage()
                 ]
             ]);
         }

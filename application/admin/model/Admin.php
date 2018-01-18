@@ -71,6 +71,22 @@ class Admin extends Model
     }
 
     /**
+     * Function: getStateAttr
+     * Description: tp5获取器根据数据库取出相应的字段的值 自动匹配对应字符串
+     * Author  : wry
+     * DateTime: 18/1/3 上午10:33
+     *
+     * @param $value 由tp5自动注入
+     *
+     * @return mixed 返回$status数组中对应value
+     */
+    public function getTypeAttr($value)
+    {
+        $status = [1 => '直营', 2 => '加盟', null => '未知状态'];
+        return $status[$value];
+    }
+
+    /**
      * Function: roles
      * Description: 多对多关系描述
      * Author  : wry
