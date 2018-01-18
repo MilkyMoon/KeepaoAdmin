@@ -21,7 +21,7 @@ class PointRuleDet extends Common
         $this->pointRuleDet = new \app\admin\model\PointRuleDet();
     }
 
-    public function selectAll(Request $request)
+    public function select(Request $request)
     {
         if ($request->has('prId', 'param', true))
         {
