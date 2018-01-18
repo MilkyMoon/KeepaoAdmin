@@ -9,6 +9,7 @@
 namespace app\index\controller;
 
 use app\index\model;
+use think\Db;
 
 class Store extends Common {
     /**
@@ -36,6 +37,10 @@ class Store extends Common {
 
         $data = $store->getDataList($keywords,$city,$lng,$lat,$page,$limit);
 
+        if(!$data){
+            return result_array(['error' => $store->getError()]);
+        }
+
         return result_array(['data' => $data]);
     }
 
@@ -49,17 +54,29 @@ class Store extends Common {
      * @param  id   int  门店id
      * @return Json
      */
-    public function details(){
+    public function store_details(){
         $store = new model\Store();
 
         $param = $this->param;
         $id = !empty($param['id']) ? $param['id'] : '';
 
-        $data = $store->getDataById($id);
+        //要显示的字段
+        $array = ['stoId','admId','stoname','county','province','city','address','longitude','latitude','isdirect'];
+
+        $data = $store->getDataById($id,$array);
 
         if (!$data){
             return result_array(['error' => $store->getError()]);
         }
+
+        $config = $store->getStoreConfig($id);      //门店配置
+        $devices = $store->getStoreDevices($id);    //门店设备
+
+        if(!$config){$config = '';}
+        if(!$devices){$devices = '';}
+
+        $data['devices'] = $devices;
+        $data['config']  = $config;
 
         return result_array(['data' => $data]);
     }

@@ -108,6 +108,8 @@ return [
 
     // 【前台】附近门店获取
     'index/store/select' => ['index/store/store_select', ['method' => 'GET']],
+    // 【前台】门店详情
+    'index/store/details' => ['index/store/store_details', ['method' => 'GET']],
     // 【前台】门店搜索
     'index/store/search' => ['index/store/search', ['method' => 'GET']],
 

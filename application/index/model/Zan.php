@@ -11,4 +11,8 @@ namespace app\index\model;
 
 class Zan extends Common{
     protected $name = 'zan';
+
+    public function thumbUp($uid){
+
+    }
 }

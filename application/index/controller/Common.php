@@ -27,7 +27,8 @@ class Common extends \app\common\controller\Common {
 
     protected $beforeActionList = [
         //需要验证请求是否合法的方法
-        'first'  =>  ['only'=>'update_user,find_user,details']
+        'first'  =>  ['only'=>'update_user,find_user,store_details,store_select'],
+        'second' =>  ['only'=>'']
     ];
 
     //判断请求是否合法
@@ -46,4 +47,7 @@ class Common extends \app\common\controller\Common {
 
     }
 
+    public function second(){
+
+    }
 }
