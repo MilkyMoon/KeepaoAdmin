@@ -25,7 +25,7 @@ class Common extends Controller
         header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, authKey, sessionId");
         header('Content-Type:text/html; charset=utf-8');
 
-        dump(session('sId'));
+        //dump(session('sId'));
 
         if (!session('?sId')) {
             throw new HttpResponseException(json([
@@ -41,7 +41,7 @@ class Common extends Controller
             throw new HttpResponseException(json([
                 'value' => false,
                 'data' => [
-                    'message' => '非法请求'
+                    'message' => 'token invalid'
                 ]
             ]));
         }
@@ -53,14 +53,14 @@ class Common extends Controller
             throw new HttpResponseException(json([
                 'value' => false,
                 'data' => [
-                    'message' => 'token验证失败'
+                    'message' => 'token invalid'
                 ]
             ]));
         }
 
         //验证权限
         $path = Request::instance()->pathinfo();
-        dump($path);
+        //dump($path);
         $check_auth = $this->checkAuth(session('sId'), $path);
 
         if (!$check_auth['value']) {
@@ -134,7 +134,7 @@ class Common extends Controller
             }
 
             $permissions = array_unique($permissions);
-            dump($permissions);
+            //dump($permissions);
             if (in_array($rule, $permissions)) {
                 return [
                     'value' => true,

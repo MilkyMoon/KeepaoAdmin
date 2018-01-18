@@ -9,6 +9,7 @@
 namespace app\admin\model;
 
 
+use think\Db;
 use think\Model;
 
 class Config extends Model
@@ -85,6 +86,7 @@ class Config extends Model
         try {
             Db::table('config')->delete($arr);
             Db::table('sto_con')->where('conId', 'in', $arr)->delete();
+            Db::commit();
         }  catch (\Exception $e) {
             Db::rollback();
             return [

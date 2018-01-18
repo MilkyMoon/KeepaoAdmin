@@ -9,6 +9,8 @@
 namespace app\admin\model;
 
 
+use think\Db;
+use think\Exception;
 use think\Model;
 
 class Message extends Model
@@ -21,6 +23,9 @@ class Message extends Model
 
     //设置自动插入修改时间
     protected $updateTime = 'modifyTime';
+
+    //添加默认值
+    protected $insert = ['state' => 1];
 
     public function getStateAttr($value)
     {
@@ -36,7 +41,7 @@ class Message extends Model
         $data['createType'] = 2;
         $data['modifyType'] = 2;
 
-        $result = $message->validate(true)->allowField()->save($data);
+        $result = $message->validate(true)->allowField(true)->save($data);
 
         if (false == $result) {
             return [
@@ -66,7 +71,27 @@ class Message extends Model
             ];
         }
 
+        Db::startTrans();
+        try {
+            Db::table('message')->where('mesId', 'in', $data)->delete();
+            Db::table('use_mes')->where('mesId', 'in', $data)->delete();
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '删除失败'
+                ]
+            ];
+        }
 
+        return [
+            'value' => true,
+            'data' =>[
+                'messsage' => '删除成功'
+            ]
+        ];
     }
 
     public function renew($data)
@@ -102,12 +127,12 @@ class Message extends Model
         ];
     }
 
-    public function select($data, $page = 1, $limit)
+    public function select($data, $type, $page = 1, $limit = 10)
     {
         if (isset($data['title'])) {
-            $result = Message::where('titl', 'like', '%'.$data['title'].'%')->paginate($limit, false, ['page' => $page]);
+            $result = Message::where('title', 'like', '%'.$data['title'].'%')->where('type', $type)->paginate($limit, false, ['page' => $page]);
         } else {
-            $result = Message::paginate($limit, false, ['page' => $page]);
+            $result = Message::where('type', $type)->paginate($limit, false, ['page' => $page]);
         }
 
         if ($result->count() > 0) {

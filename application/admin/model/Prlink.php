@@ -62,6 +62,7 @@ class Prlink extends Pivot
             //dump($data);
             Db::table('prlink')->where('rId', $rId)->delete();
             Db::table('prlink')->insertAll($data);
+            Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             return [

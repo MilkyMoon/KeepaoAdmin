@@ -9,6 +9,7 @@
 namespace app\admin\controller;
 
 
+use app\admin\model\User;
 use think\Controller;
 use think\exception\HttpResponseException;
 use think\Request;
@@ -108,6 +109,41 @@ class Admin extends Common
             ]);
         }
 
+    }
+
+    public function getuser(Request $request)
+    {
+        if (!$request->has('type', 'param', true)) {
+            return json([
+                'value' => false,
+                'data' => [
+                    'message' => '缺少类型参数'
+                ]
+            ]);
+        }
+        if ($request->param('type') == 1) {
+            $user = User::get($request->param('sId'));
+
+        }
+        if ($request->param('type') == 2) {
+            $user = \app\admin\model\Admin::get($request->param('sId'));
+        }
+
+        if (isset($user) && !is_null($user)) {
+            return json([
+                'value' => true,
+                'data' => [
+                    'message' => '查询成功',
+                    'data' => $user->getAttr('name')
+                ]
+            ]);
+        }
+        return json([
+            'value' => false,
+            'data' => [
+                'message' => '查询失败',
+            ]
+        ]);
     }
 
 }
