@@ -57,57 +57,26 @@ class Config extends Common
         return json($this->config->renew($request->param()));
     }
 
-    public function selectByName(Request $request)
+
+
+    public function select(Request $request)
     {
         if ($request->has('type', 'param', true)) {
             $type = $request->param('type');
-            if ($request->has('name', 'param', true))
-            {
-                $name = $request->param('name');
-                if ($request->has('page', 'param', true))
-                {
-                    $page = $request->param('page');
-                    if ($request->has('limit', 'param', true))
-                    {
-                        return json($this->config->select($type, $name, $page, $request->param('limit')));
-                    }
-                    return json($this->config->select($type, $name, $page));
-                }
-                return json($this->config->select($type, $name));
-            } else {
-                return json([
-                    'value' => false,
-                    'data' => [
-                        'message' => 'name参数不能为空'
-                    ]
-                ]);
+            $data = [];
+            if ($request->has('name', 'param', true)) {
+                $data['name'] = $request->param('name');
             }
-
-        } else {
-            return json([
-                'value' => false,
-                'data' => [
-                    'message' => '类型参数不能为空'
-                ]
-            ]);
-        }
-    }
-
-    public function selectAll(Request $request)
-    {
-        if ($request->has('type', 'param', true)) {
-            $type = $request->param('type');
-
             if ($request->has('page', 'param', true))
             {
                 $page = $request->param('page');
                 if ($request->has('limit', 'param', true))
                 {
-                    return json($this->config->select($type, '', $page, $request->param('limit')));
+                    return json($this->config->select($type, $data, $page, $request->param('limit')));
                 }
-                return json($this->config->select($type, '', $page));
+                return json($this->config->select($type, $data, $page));
             }
-            return json($this->config->select($type, ''));
+            return json($this->config->select($type, $data));
 
         } else {
             return json([

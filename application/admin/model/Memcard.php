@@ -156,20 +156,20 @@ class Memcard extends Model
         ];
     }
 
-    public function select($name, $page = 1, $limit = 10)
+    public function select($data, $page = 1, $limit = 10)
     {
-        if (!empty($name)) {
-            $result = Memcard::where('name', 'like', '%'.$name.'%')->paginate($limit, false, ['page' => $page]);
-        } else {
-            $result = Memcard::paginate($limit, false, ['page' => $page]);
+        $memcard = new Memcard;
+        if (isset($data['name'])) {
+            $memcard = $memcard->where('name', 'like', '%'.$name.'%');//->paginate($limit, false, ['page' => $page]);
         }
+        $memcard = $memcard->paginate($limit, false, ['page' => $page]);
 
         if ($result->count() > 0) {
             return [
                 'value' => true,
                 'data' => [
                     'message' => '查询成功',
-                    'data' => $result
+                    'data' => $memcard
                 ]
             ];
         }

@@ -21,38 +21,26 @@ class Role extends Common
         $this->role = new \app\admin\model\Role();
     }
 
-    public function selectByName(Request $request)
-    {
-        if ($request->has('name', 'param', true)) {
-            $name = $request->param('name');
-            if ($request->has('page', 'param', true)) {
-                $page = $request->param('page');
-                if ($request->has('limit', 'param', true)) {
-                    return json($this->role->select($name, $page, $request->param('limit')));
-                }
-                return json($this->role->select($name, $page));
-            }
-            return json($this->role->select($name));
-        } else {
-            return json([
-                'value' => false,
-                'data' => [
-                    'message' => 'name参数不能为空'
-                ]
-            ]);
-        }
-    }
 
-    public function selectAll(Request $request)
+    public function select(Request $request)
     {
+        $data = [];
+        if ($request->has('name', 'param', true)) {
+            $data['name'] = $request->param('name');
+        }
+
+        if ($request->has('state', 'param', true)) {
+            $data['state'] = $request->param('state');
+        }
+
         if ($request->has('page', 'param', true)) {
             $page = $request->param('page');
             if ($request->has('limit', 'param', true)) {
-                return json($this->role->select('', $page, $request->param('limit')));
+                return json($this->role->select($data, $page, $request->param('limit')));
             }
-            return json($this->role->select('', $page));
+            return json($this->role->select($data, $page));
         }
-        return json($this->role->select(''));
+        return json($this->role->select($data));
     }
 
     public function add(Request $request)

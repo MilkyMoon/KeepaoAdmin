@@ -57,7 +57,7 @@ class Coupon extends Common
         return json($this->coupon->renew($request->param()));
     }
 
-    public function selectAll(Request $request)
+    public function select(Request $request)
     {
         if ($request->has('page', 'param', true)) {
             $page = $request->param('page');
