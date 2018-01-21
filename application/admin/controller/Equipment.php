@@ -2,24 +2,23 @@
 /**
  * Created by PhpStorm.
  * User: wry
- * Date: 18/1/16
- * Time: 下午4:41
+ * Date: 18/1/18
+ * Time: 下午10:34
  */
 
 namespace app\admin\controller;
 
 
-use GuzzleHttp\Promise\RejectionException;
 use think\Request;
 
-class Coupon extends Common
+class Equipment extends Common
 {
-    public $coupon;
+    protected $equipment;
 
     public function __construct(Request $request = null)
     {
         parent::__construct($request);
-        $this->coupon = new \app\admin\model\Coupon();
+        $this->equipment = new \app\admin\model\Equipment();
     }
 
     public function add(Request $request)
@@ -34,59 +33,67 @@ class Coupon extends Common
                 ]);
             }
             session('csrf', md5($_SERVER['REQUEST_TIME_FLOAT']));
-            return json($this->coupon->add($request->param()));
+            return json($this->equipment->add($request->param()));
         }
     }
 
     public function delete(Request $request)
     {
         if ($request->has('del', 'param', true)) {
-            return json($this->coupon->del($request->param('del')));
+            return json($this->equipment->del($request->param('del')));
         } else {
             return json([
                 'value' => false,
                 'data' => [
-                    'message' => '缺少删除参数'
+                    'message' => '缺少删除字段'
                 ]
             ]);
         }
-
     }
 
     public function update(Request $request)
     {
-        return json($this->coupon->renew($request->param()));
+        return json($this->equipment->renew($request->param()));
     }
 
     public function select(Request $request)
     {
+        $data = [];
+        if ($request->has('equId', 'param', true)) {
+            $data['equId'] = $request->param('equId');
+        }
+
+        if ($request->has('equno', 'param', true)) {
+            $data['equno'] = $request->param('equno');
+        }
+
         if ($request->has('page', 'param', true)) {
             $page = $request->param('page');
             if ($request->has('limit', 'param', true)) {
-                return json($this->coupon->select($page, $request->param('limit')));
+                return json($this->equipment->select($data, $page, $request->param('limit')));
             }
-            return json($this->coupon->select($page));
+            return json($this->equipment->select($data, $page));
         }
-        return json($this->coupon->select());
+        return json($this->equipment->select($data));
     }
 
-    public function selectDet(Request $request)
+    public function getimg(Request $request)
     {
-        if ($request->has('couId', 'param', true)) {
-            $couId = $request->param('couId');
+        if ($request->has('equId', 'param', true)) {
+            $equId = $request->param('equId');
             if ($request->has('page', 'param', true)) {
                 $page = $request->param('page');
                 if ($request->has('limit', 'param', true)) {
-                    return json($this->coupon->selectDet($couId, $page, $request->param('limit')));
+                    return json($this->equipment->getimg($equId, $page, $request->param('limit')));
                 }
-                return json($this->coupon->selectDet($couId, $page));
+                return json($this->equipment->getimg($equId, $page));
             }
-            return json($this->coupon->selectDet($couId));
+            return json($this->equipment->getimg($equId));
         } else {
             return json([
                 'value' => false,
                 'data' =>[
-                    'message' => '优惠券Id不能为空'
+                    'message' => '店铺Id不能为空'
                 ]
             ]);
         }

@@ -53,7 +53,8 @@ class PointRuleDet extends Model
         return [
             'value' => true,
             'data' => [
-                'message' => '添加成功'
+                'message' => '添加成功',
+                'data' => $pointRuleDet
             ]
         ];
     }

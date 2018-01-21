@@ -119,7 +119,7 @@ class Token
             return [
                 'value' => false,
                 'data' => [
-                    'message' => '非法请求'
+                    'message' => 'token invalid'
                 ]
             ];
         }
@@ -134,7 +134,7 @@ class Token
             return [
                 'value' => false,
                 'data' => [
-                    'message' => 'token失效'
+                    'message' => 'token invalid'
                 ]
             ];
         }
@@ -154,7 +154,7 @@ class Token
 
         $iat = strtotime('now');
         $exp = strtotime("+1 day", $iat);
-        $access_token = Token::get_token($admin->account, $iat, $exp, Request::instance()->header()['host']);
+        $access_token = Token::get_token($admin->sId, $iat, $exp, Request::instance()->header()['host']);
 
         return [
             'value' => true,

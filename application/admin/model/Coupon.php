@@ -26,11 +26,11 @@ class Coupon extends Model
     //添加默认值
     protected $insert = ['state' => 1, 'send' => 0];
 
-    public function getStateAttr($value)
-    {
-        $status = [1 => '启用', 0 => '注销', 2 => '删除', null => '未知状态'];
-        return $status[$value];
-    }
+//    public function getStateAttr($value)
+//    {
+//        $status = [1 => '启用', 0 => '注销', 2 => '删除', null => '未知状态'];
+//        return $status[$value];
+//    }
 
     public function add($data)
     {
@@ -76,7 +76,8 @@ class Coupon extends Model
         return [
             'value' => true,
             'data' => [
-                'message' => '添加成功'
+                'message' => '添加成功',
+                'data' => $coupon
             ]
         ];
     }
@@ -193,6 +194,18 @@ class Coupon extends Model
             'value' => $flag,
             'data' => [
                 'message' => $msg,
+                'data' => $result
+            ]
+        ];
+    }
+
+    public function selectDet($couId, $page = 1, $limit = 10)
+    {
+        $result = Db::table('cou_det')->where('couId', $couId)->paginate($limit, false, ['page' => $page]);
+        return [
+            'value' => true,
+            'data' => [
+                'message' => '查询成功',
                 'data' => $result
             ]
         ];

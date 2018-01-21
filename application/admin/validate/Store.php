@@ -30,6 +30,6 @@ class Store extends Validate
         'county.require'  =>  '县不能为空',
         'longitude.require'  =>  '经度不能为空',
         'latitude.require'  =>  '纬度不能为空',
-        'isdirect.require'  =>  '纬度不能为空',
+        'isdirect.require'  =>  '是否为直营不能为空',
     ];
 }
