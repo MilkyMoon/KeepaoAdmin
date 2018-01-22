@@ -47,11 +47,11 @@ class Permission extends Model
      *
      * @return mixed 返回$status数组中对应value
      */
-    public function getStateAttr($value)
-    {
-        $status = [1 => '启用', 0 => '注销', null => '未知状态'];
-        return $status[$value];
-    }
+//    public function getStateAttr($value)
+//    {
+//        $status = [1 => '启用', 0 => '注销', null => '未知状态'];
+//        return $status[$value];
+//    }
 
     public function select($data, $page = 1, $limit = 10)
     {

@@ -2,21 +2,19 @@
 /**
  * Created by PhpStorm.
  * User: wry
- * Date: 18/1/16
- * Time: 下午11:19
+ * Date: 18/1/18
+ * Time: 下午10:34
  */
 
 namespace app\admin\model;
 
 
 use think\Db;
-use think\Exception;
 use think\Model;
-use think\Request;
 
-class Store extends Model
+class Equipment extends Model
 {
-    protected $pk = 'stoId';
+    protected $pk = 'equId';
 
     //设置自动插入生成时间
     protected $createTime = 'createTime';
@@ -24,23 +22,9 @@ class Store extends Model
     //设置自动插入修改时间
     protected $updateTime = 'modifyTime';
 
-    //添加默认值
-    protected $insert = ['state' => 1, 'moeny' => 0];
-
-//    public function getStateAttr($value)
-//    {
-//        $status = [1 => '启用', 0 => '注销', 2 => '删除', null => '未知状态'];
-//        return $status[$value];
-//    }
-
-    public function coupons()
-    {
-        return $this->belongsToMany('Coupon','sto_con', 'conId', 'stoId');
-    }
-
     public function imgs()
     {
-        return $this->belongsToMany('Imgs','sto_img', 'imgId', 'stoId');
+        return $this->belongsToMany('Imgs','equ_img', 'imgId', 'stoId');
     }
 
     public function add($data)
@@ -49,15 +33,14 @@ class Store extends Model
         $data['modifyUser'] = session('sId');
         $data['createType'] = 2;
         $data['modifyType'] = 2;
-        $data['stono'] = 'Kp'.strtotime('now').$this->create_key(5);
-        $store = new Store;
-        $result = $store->allowField(true)->validate(true)->save($data);
+        $equ = new Equipment;
+        $result = $equ->allowField(true)->validate(true)->save($data);
 
         if (false == $result) {
             return [
                 'value' => false,
                 'data' => [
-                    'message' => $store->getError()
+                    'message' => $equ->getError()
                 ]
             ];
         }
@@ -68,38 +51,20 @@ class Store extends Model
             $arr = array_filter($arr);
             foreach ($arr as $a) {
                 $tmp = [];
-                $tmp['stoId'] = $store->getAttr('stoId');
+                $tmp['equId'] = $equ->getAttr('stoId');
                 $tmp['imgId'] = $a;
                 array_push($img, $tmp);
             }
         }
         if (!empty($img))
-            Db::table('sto_img')->insertAll($img);
+            Db::table('equ_img')->insertAll($img);
         return [
             'value' => true,
             'data' => [
                 'message' => '添加成功',
-                'data' => $store
+                'data' => $equ
             ]
         ];
-    }
-
-    public  function checkName($name, $stoId = '')
-    {
-        $store = Store::get([
-            'stoname' => $name
-        ]);
-
-        $flag = true;
-        if (is_null($store)) {
-            $flag = false;
-        } else {
-            if (!empty($store) && $store->getAttr('stoId') == $stoId) {
-                $flag = false;
-            }
-        }
-
-        return $flag;
     }
 
     public function del($data)
@@ -113,23 +78,13 @@ class Store extends Model
             ];
         }
 
-        $count = Db::table('sto_equ')->where('stoId', 'in', $data)->count();
-
-        if ($count > 0) {
-            return [
-                'value' => false,
-                'data' => [
-                    'message' => '商店中还有设备，删除前请先转移或删除设备'
-                ]
-            ];
-        }
 
         $arr = explode(',', $data);
         $arr = array_unique($arr);
         $arr = array_filter($arr);
 
         foreach ($arr as $a) {
-            $imgs = Db::table('sto_img')->where('stoId', $a)->select();
+            $imgs = Db::table('equ_img')->where('stoId', $a)->select();
             foreach ($imgs as $img)
             {
                 $tmp = Imgs::get($img['imgId']);
@@ -137,11 +92,10 @@ class Store extends Model
             }
         }
 
-
         Db::startTrans();
         try {
-            Db::table('store')->where('stoId', 'in', $data)->delete();
-            Db::table('sto_img')->where('stoId', 'in', $data)->delete();
+            Db::table('equipment')->where('equId', 'in', $data)->delete();
+            Db::table('sto_equ')->where('equId', 'in', $data)->delete();
             Db::commit();
         }  catch (Exception $e) {
             Db::rollback();
@@ -163,24 +117,13 @@ class Store extends Model
 
     public function renew($data)
     {
-        if (!isset($data['stoId']) || empty($data['stoId'])) {
+        if (!isset($data['equId']) || empty($data['equId'])) {
             return [
                 'value' => false,
                 'data' => [
                     'message' => '缺少主键参数'
                 ]
             ];
-        }
-
-        if (isset($data['stoname'])) {
-            if ($this->checkName($data['stoname'], $data['stoId'])) {
-                return [
-                    'value' => false,
-                    'data' => [
-                        'message' => '店名已经存在'
-                    ]
-                ];
-            }
         }
 
         $img = [];
@@ -190,25 +133,25 @@ class Store extends Model
             $arr = array_filter($arr);
             foreach ($arr as $a) {
                 $tmp = [];
-                $tmp['stoId'] = $data['stoId'];
+                $tmp['equId'] = $data['equId'];
                 $tmp['imgId'] = $a;
                 array_push($img, $tmp);
             }
         }
         if (!empty($img))
-            Db::table('sto_img')->insertAll($img);
+            Db::table('equ_img')->insertAll($img);
 
         $data['modifyUser'] = session('sId');
         $data['modifyType'] = 2;
-        $store = new Store;
+        $equ = new Equipment;
 
-        $result = $store->allowField(true)->isUpdate(true)->save($data);
+        $result = $equ->allowField(true)->isUpdate(true)->save($data);
 
         if (false == $result) {
             return [
                 'value' => false,
                 'data' => [
-                    'message' => $store->getError()
+                    'message' => $equ->getError()
                 ]
             ];
         }
@@ -219,40 +162,27 @@ class Store extends Model
                 'message' => '修改成功'
             ]
         ];
-
     }
 
     public function select($data, $page = 1, $limit = 10)
     {
-        $store = new Store;
-        if (isset($data['stoname'])) {
-            $store = $store->whereOr('stoname', 'like', '%'.$data['stoname'].'%');
+        $equ = new Equipment;
+        if (isset($data['equno'])) {
+            $equ = $equ->whereOr('equno', 'like', '%'.$data['equno'].'%');
         }
 
-        if (isset($data['stono'])) {
-            $store = $store->whereOr('stono', 'like', '%'.$data['stono'].'%');
+        if (isset($data['equId'])) {
+            $equ = $equ->whereOr('equId', 'like', '%'.$data['equId'].'%');
         }
 
-        if (isset($data['province'])) {
-            $store = $store->whereOr('province', $data['province']);
-        }
+        $equ = $equ->paginate($limit, false, ['page' => $page]);
 
-        if (isset($data['city'])) {
-            $store = $store->whereOr('city', $data['city']);
-        }
-
-        if (isset($data['county'])) {
-            $store = $store->whereOr('county', $data['county']);
-        }
-
-        $store = $store->paginate($limit, false, ['page' => $page]);
-
-        if ($store->count() > 0) {
+        if ($equ->count() > 0) {
             return [
                 'value' => true,
                 'data' => [
                     'message' => '查询成功',
-                    'data' => $store
+                    'data' => $equ
                 ]
             ];
         }
@@ -264,18 +194,9 @@ class Store extends Model
         ];
     }
 
-    private function create_key($length)
+    public function getimg($equId, $page = 1, $limit = 10)
     {
-        $randkey = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randkey .= chr(mt_rand(48, 57));
-        }
-        return $randkey;
-    }
-
-    public function getcou($stoId, $page = 1, $limit = 10)
-    {
-        if (empty($stoId)) {
+        if (empty($equId)) {
             return [
                 'value' => false,
                 'data' => [
@@ -284,8 +205,8 @@ class Store extends Model
             ];
         }
 
-        $store = Store::get($stoId);
-        if (is_null($store)) {
+        $equ = Equipment::get($equId);
+        if (is_null($equ)) {
             return [
                 'value' => false,
                 'data' => [
@@ -293,38 +214,7 @@ class Store extends Model
                 ]
             ];
         }
-        //dump($admin->roles());
-        $coupons = $store->coupons()->paginate($limit, false, ['page' => $page]);
-        return [
-            'value' => true,
-            'data' => [
-                'message' => '查询成功',
-                'data' => $coupons
-            ]
-        ];
-    }
-
-    public function getimg($stoId, $page = 1, $limit = 10)
-    {
-        if (empty($stoId)) {
-            return [
-                'value' => false,
-                'data' => [
-                    'message' => '角色Id不能为空'
-                ]
-            ];
-        }
-
-        $store = Store::get($stoId);
-        if (is_null($store)) {
-            return [
-                'value' => false,
-                'data' => [
-                    'message' => '门店不存在'
-                ]
-            ];
-        }
-        $img = $store->imgs()->paginate($limit, false, ['page' => $page]);
+        $img = $equ->imgs()->paginate($limit, false, ['page' => $page]);
         $arr = [];
 
         foreach ($img as $i) {

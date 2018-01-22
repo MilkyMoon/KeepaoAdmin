@@ -25,8 +25,7 @@
 
     //后台管理员
     'admin/add' => ['admin/admin/add', ['method' => 'post']],
-    'admin/selectAll' => ['admin/admin/selectAll', ['method' => 'get']],
-    'admin/selectByName' => ['admin/admin/selectByName', ['method' => 'get']],
+    'admin/select' => ['admin/admin/select', ['method' => 'get']],
     'admin/delete' => ['admin/admin/delete', ['method' => 'post']],
     'admin/update' => ['admin/admin/update', ['method' => 'post']],
     'admin/getrole' => ['admin/admin/getrole', ['method' => 'get']],
@@ -50,7 +49,7 @@
     'config/update' => ['admin/config/update', ['method' => 'post']],
 
     //积分规则
-    'prule/selectAll' => ['admin/pointRule/selectAll', ['method' => 'get']],
+    'prule/select' => ['admin/pointRule/select', ['method' => 'get']],
     'prules/add' => ['admin/pointRuleDet/add', ['method' => 'post']],
     'prules/select' => ['admin/pointRuleDet/select', ['method' => 'get']],
     'prules/delete' => ['admin/pointRuleDet/delete', ['method' => 'post']],
@@ -68,12 +67,36 @@
     'coupon/delete' => ['admin/coupon/delete', ['method' => 'post']],
     'coupon/update' => ['admin/coupon/update', ['method' => 'post']],
 
-    //优惠券
+    //消息
     'message/add' => ['admin/message/add', ['method' => 'post']],
     'message/select' => ['admin/message/select', ['method' => 'get']],
     'message/delete' => ['admin/message/delete', ['method' => 'post']],
     'message/update' => ['admin/message/update', ['method' => 'post']],
 
+    //门店
+    'store/add' => ['admin/store/add', ['method' => 'post']],
+    'store/select' => ['admin/store/select', ['method' => 'get']],
+    'store/delete' => ['admin/store/delete', ['method' => 'post']],
+    'store/update' => ['admin/store/update', ['method' => 'post']],
+    'store/addequ' => ['admin/store/addequ', ['method' => 'post']],
+    'store/getcou' => ['admin/store/getcou', ['method' => 'get']],
+    'store/getimg' => ['admin/store/getimg', ['method' => 'get']],
+
+    //设备
+    'equipment/add' => ['admin/equipment/add', ['method' => 'post']],
+    'equipment/select' => ['admin/equipment/select', ['method' => 'get']],
+    'equipment/delete' => ['admin/equipment/delete', ['method' => 'post']],
+    'equipment/update' => ['admin/equipment/update', ['method' => 'post']],
+
+    //用户
+    'user/select' => ['admin/user/select', ['method' => 'get']],
+    'user/update' => ['admin/user/update', ['method' => 'post']],
+
+    //图片
+    'imgs/add' => ['admin/imgs/add', ['method' => 'post']],
+    'imgs/update' => ['admin/imgs/update', ['method' => 'post']],
+    'imgs/select' => ['admin/imgs/select', ['method' => 'get']],
+    'imgs/delete' => ['admin/imgs/delete', ['method' => 'post']],
 //    '__miss__' => 'admin/behavior/miss',
 ]);
 

@@ -36,11 +36,11 @@ class Config extends Model
      *
      * @return mixed 返回$status数组中对应value
      */
-    public function getStateAttr($value)
-    {
-        $status = [1 => '启用', 0 => '注销', null => '未知状态'];
-        return $status[$value];
-    }
+//    public function getStateAttr($value)
+//    {
+//        $status = [1 => '启用', 0 => '注销', null => '未知状态'];
+//        return $status[$value];
+//    }
 
     public function add($data)
     {
@@ -63,7 +63,8 @@ class Config extends Model
         return [
             'value' => true,
             'data' => [
-                'message' => '添加成功'
+                'message' => '添加成功',
+                'data' => $config
             ]
         ];
     }

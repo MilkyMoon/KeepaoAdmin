@@ -50,10 +50,10 @@ class Admin extends Model
      *
      * @return mixed 返回$status数组中对应value
      */
-    public function getStateAttr($value)
-    {
-        return $this->statusArr[$value];
-    }
+//    public function getStateAttr($value)
+//    {
+//        return $this->statusArr[$value];
+//    }
 
     /**
      * Function: getGenderAttr
@@ -65,10 +65,10 @@ class Admin extends Model
      *
      * @return mixed 返回$status数组中对应value
      */
-    public function getGenderAttr($value)
-    {
-        return $this->genderArr[$value];
-    }
+//    public function getGenderAttr($value)
+//    {
+//        return $this->genderArr[$value];
+//    }
 
     /**
      * Function: getStateAttr
@@ -80,11 +80,11 @@ class Admin extends Model
      *
      * @return mixed 返回$status数组中对应value
      */
-    public function getTypeAttr($value)
-    {
-        $status = [1 => '直营', 2 => '加盟', null => '未知状态'];
-        return $status[$value];
-    }
+//    public function getTypeAttr($value)
+//    {
+//        $status = [1 => '直营', 2 => '加盟', null => '未知状态'];
+//        return $status[$value];
+//    }
 
     /**
      * Function: roles
@@ -153,7 +153,7 @@ class Admin extends Model
             $admin = $admin->where('account', 'like', '%'.$data['account'].'%');//->paginate($limit, false, ['page' => $page]);
         if (isset($data['state']) && $data['state'] != 2)
             $admin = $admin->where('state', $data['state']);
-        $admin = $admin->where('state')->paginate($limit, false, ['page' => $page]);
+        $admin = $admin->where('state', '<>', 2)->paginate($limit, false, ['page' => $page]);
         $flag = false;
         $msg = '没有找到数据';
         if ($admin->count() > 0) {
@@ -205,7 +205,8 @@ class Admin extends Model
         return [
             'value' => $flag,
             'data' => [
-                'message' => $msg
+                'message' => $msg,
+                'data' => $user
             ]
         ];
     }
@@ -264,7 +265,7 @@ class Admin extends Model
             $arr = array_unique($arr);
             $arr = array_filter($arr);
 
-            Db::table('admin')->where('sId', 'in', $arr)->update(['state' => 2]);
+            Db::table('admin')->where('sId', 'in', $arr)->update(['state' => 2, 'account' => '']);
             foreach ($arr as $a) {
                 Db::table('urlink')->where(['aId' => (int)$a])->delete();
             }
