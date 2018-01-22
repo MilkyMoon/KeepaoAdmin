@@ -50,14 +50,11 @@ class User extends Common {
         $user = new model\User();
         $param = $this->param;
 
-        if(!$param['uid']){
+        if(!$param['uId']){
             return result_array(['error' => '没有用户id']);
         }
 
-        $param['modifyUser'] = $param['uid'];
-        $param['modifyTime'] = date("Y-m-d H:i:s");
-
-        $data = $user->updateDataById($param,$param['uid']);
+        $data = $user->updateDataById($param,$param['uId']);
 
         if (!$data){
             return result_array(['error' => $user->getError()]);
@@ -77,5 +74,14 @@ class User extends Common {
         }
 
         return result_array(['data' => $data]);
+    }
+
+    //设置本周运动目标
+    public function set_goal(){
+        $goal = new model\Goal();
+        $param = $this->param;
+
+
+
     }
 }
