@@ -43,4 +43,6 @@ class User extends Common
     {
         return json($this->user->renew($request->param()));
     }
+
+
 }

@@ -23,7 +23,7 @@ class Coupon extends Validate
     ];
 
     protected $message = [
-        'startDay.require'  =>  '起始时间不能为空',
+        'startDate.require'  =>  '起始时间不能为空',
         'endDate.require' => '截止时间不能为空',
         'condition.require' => '条件不能为空',
         'stoId.require' => '门店Id不能为空',

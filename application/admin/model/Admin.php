@@ -126,14 +126,11 @@ class Admin extends Model
         }
 
         switch ($admin->getData('state')) {
-            case 1:
-                $message = '你的帐号正在审核中不能进行此操作，请耐心等待。';
-                break;
-            case 2:
-                $value = true;
-                break;
-            case 3:
+            case 0:
                 $message = '你的帐号已注销不能进行此操作，如有疑问请联系客服。';
+                break;
+            case 1:
+                $value = true;
                 break;
             default:
                 $message = '你的帐号有异常不能进行此操作，如有疑问请联系客服。';
@@ -149,8 +146,11 @@ class Admin extends Model
     public function select($data, $page = 1, $limit = 10)
     {
         $admin = new Admin;
-        if (isset($data['account']))
-            $admin = $admin->where('account', 'like', '%'.$data['account'].'%');//->paginate($limit, false, ['page' => $page]);
+        if (isset($data['search'])) {
+            $admin = $admin->where('account', 'like', '%'.$data['search'].'%');
+            $admin = $admin->whereOr('name', 'like', '%'.$data['search'].'%');
+        }
+            //->paginate($limit, false, ['page' => $page]);
         if (isset($data['state']) && $data['state'] != 2)
             $admin = $admin->where('state', $data['state']);
         $admin = $admin->where('state', '<>', 2)->paginate($limit, false, ['page' => $page]);
@@ -297,6 +297,25 @@ class Admin extends Model
                     'message' => '缺少主键'
                 ]
             ];
+        }
+        if (isset($data['state']) && $data['state'] == 0) {
+            if (1 == $data['sId']) {
+                return [
+                    'value' => false,
+                    'data' => [
+                        'message' => '不能注销超级管理员'
+                    ]
+                ];
+            }
+
+            if (session('sId') == $data['sId']) {
+                return [
+                    'value' => false,
+                    'data' => [
+                        'message' => '不能注销自己'
+                    ]
+                ];
+            }
         }
 
         if (isset($data['password']))

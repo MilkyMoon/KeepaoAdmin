@@ -29,6 +29,10 @@ class Permission extends Common
             $data['name'] = $request->param('name');
         }
 
+        if ($request->has('all', 'param', true)) {
+            $data['all'] = $request->param('all');
+        }
+
         if ($request->has('state', 'param', true)) {
             $data['state'] = $request->param('state');
         }

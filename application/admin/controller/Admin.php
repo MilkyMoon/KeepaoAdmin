@@ -73,6 +73,22 @@ class Admin extends Common
     public function delete(Request $request)
     {
         if ($request->has('del', 'param', true)) {
+            if (stripos('1', $request->param('del')) !== false) {
+                return json([
+                    'value' => false,
+                    'data' => [
+                        'message' => '不能删除超级管理员'
+                    ]
+                ]);
+            }
+            if (stripos(session('sId'), $request->param('del')) !== false) {
+                return json([
+                    'value' => false,
+                    'data' => [
+                        'message' => '不能删除自己'
+                    ]
+                ]);
+            }
             return json($this->admin->del($request->param('del')));
         } else {
             return json([

@@ -97,6 +97,13 @@
     'imgs/update' => ['admin/imgs/update', ['method' => 'post']],
     'imgs/select' => ['admin/imgs/select', ['method' => 'get']],
     'imgs/delete' => ['admin/imgs/delete', ['method' => 'post']],
+
+    //门店
+    'active/add' => ['admin/active/add', ['method' => 'post']],
+    'active/select' => ['admin/active/select', ['method' => 'get']],
+    'active/delete' => ['admin/active/delete', ['method' => 'post']],
+    'active/update' => ['admin/active/update', ['method' => 'post']],
+    'active/getimg' => ['admin/active/getimg', ['method' => 'get']],
 //    '__miss__' => 'admin/behavior/miss',
 ]);
 
