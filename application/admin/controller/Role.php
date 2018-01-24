@@ -29,6 +29,10 @@ class Role extends Common
             $data['name'] = $request->param('name');
         }
 
+        if ($request->has('all', 'param', true)) {
+            $data['all'] = $request->param('all');
+        }
+
         if ($request->has('state', 'param', true)) {
             $data['state'] = $request->param('state');
         }
@@ -70,6 +74,24 @@ class Role extends Common
     public function delete(Request $request)
     {
         if ($request->has('del', 'param', true)) {
+            if (stripos('1', $request->param('del')) !== false) {
+                return json([
+                    'value' => false,
+                    'data' => [
+                        'message' => '不能删除超级管理员'
+                    ]
+                ]);
+            }
+            foreach ($this->role->jichu as $item) {
+                if (stripos($item, $request->param('del')) !== false) {
+                    return [
+                        'value' => false,
+                        'data' => [
+                            'message' => '不能注销基础管理员'
+                        ]
+                    ];
+                }
+            }
             return json($this->role->del($request->param('del')));
         } else {
             return json([

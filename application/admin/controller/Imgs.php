@@ -26,7 +26,6 @@ class Imgs extends Common
     {
         // 获取表单上传文件
         $files = request()->file('img');
-
         if (sizeof($files) < 1) {
             return json([
                 'value' => false,

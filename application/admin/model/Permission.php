@@ -62,10 +62,13 @@ class Permission extends Model
         if (isset($data['state']))
             $permission = $permission->where('state', $data['state']);
 
-        $permission = $permission->order('sort desc')->paginate($limit, false, ['page' => $page]);
+        if (isset($data['all']) && $data['all'] == 1)
+            $result = $permission->order('sort desc')->select();
+        else
+            $result  = $permission->where('state', 1)->order('sort desc')->paginate($limit, false, ['page' => $page]);
         $flag = false;
         $msg = '没找到数据';
-        if ($permission->count() > 0) {
+        if ($result->count() > 0) {
             $flag = true;
             $msg = '';
         }
@@ -73,7 +76,7 @@ class Permission extends Model
             'value' => $flag,
             'data' => [
                 'message' => $msg,
-                'data' => $permission
+                'data' => $result
             ]
         ];
     }

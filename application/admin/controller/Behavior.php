@@ -63,11 +63,20 @@ class Behavior extends Controller
             ]);
         }
 
-        if ($admin->getData('state') != 2) {
+        if ($admin->getData('state') != 1) {
             return json([
                 'value' => false,
                 'data' => [
                     'message' => '帐户状态异常'
+                ]
+            ]);
+        }
+
+        if ($admin->getData('type') != 2) {
+            return json([
+                'value' => false,
+                'data' => [
+                    'message' => '你的账号只能登陆加盟后台'
                 ]
             ]);
         }

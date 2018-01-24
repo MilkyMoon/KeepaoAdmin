@@ -33,6 +33,8 @@ class Role extends Model
         return $this->stateStr;
     }
 
+    public $jichu = [2,3,4,5,6];
+
     /**
      * Function: getStateAttr
      * Description: tp5获取器根据数据库取出相应的字段的值 自动匹配对应字符串
@@ -229,6 +231,27 @@ class Role extends Model
                     'message' => '缺少主键'
                 ]
             ];
+        }
+
+        if (isset($data['state']) && $data['state'] == 0) {
+            if (1 == $data['sId']) {
+                return [
+                    'value' => false,
+                    'data' => [
+                        'message' => '不能注销超级管理员'
+                    ]
+                ];
+            }
+            foreach ($this->jichu as $item) {
+                if ($item == $data['sId']) {
+                    return [
+                        'value' => false,
+                        'data' => [
+                            'message' => '不能注销基础管理员'
+                        ]
+                    ];
+                }
+            }
         }
 
         if (isset($data['name']))

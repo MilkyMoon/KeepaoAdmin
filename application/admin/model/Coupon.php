@@ -72,7 +72,10 @@ class Coupon extends Model
                 ]
             ];
         }
-
+        Db::table('sto_con')->insert([
+            'stoId' => $data['stoId'],
+            'conId' => $coupon->getAttr('couId')
+        ]);
         return [
             'value' => true,
             'data' => [

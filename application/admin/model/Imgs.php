@@ -107,7 +107,7 @@ class Imgs extends Model
             ];
         }
 
-        if ($data['table'] < 0 || $data['table'] > sizeof($table)) {
+        if (isset($data['table']) && ($data['table'] < 0 || $data['table'] > sizeof($table))) {
             return [
                 'value' => false,
                 'data' => [
