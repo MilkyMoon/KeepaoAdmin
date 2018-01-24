@@ -138,6 +138,11 @@ return [
     // 【前台】点赞
     'index/zan/up' => ['index/zan/thumb_up', ['method' => 'GET']],
 
+    // 【前台】添加留言
+    'index/message/add' => ['index/message/message_add', ['method' => 'POST']],
+    // 【前台】获取消息
+    'index/message/select' => ['index/message/message_select', ['method' => 'GET']],
+
     // 【前台】附近门店获取
     'index/store/select' => ['index/store/store_select', ['method' => 'GET']],
     // 【前台】门店详情

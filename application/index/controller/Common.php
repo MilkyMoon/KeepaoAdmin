@@ -26,10 +26,9 @@ class Common extends \app\common\controller\Common {
     }
 
     protected $beforeActionList = [
-        //需要验证请求是否合法的方法
-        'first'  =>  ['only'=>'update_user,find_user,store_details,store_select,statistics'],
-        'second' =>  ['only'=>'thumb_up'],
-        'third'  =>  ['only'=>'']
+        'first'  =>  ['only'=>'update_user,find_user,store_details,store_select,statistics,user_select,message_add,cou_select,message_select'],   //需要验证请求是否合法的方法
+        'second' =>  ['only'=>'thumb_up,set_goal,message_add'], //需要添加数据的时候默认参数的方法
+        'third'  =>  ['only'=>'update_user']    //需要更新数据的时候默认参数的方法
     ];
 
     //判断请求是否合法
@@ -45,7 +44,6 @@ class Common extends \app\common\controller\Common {
         if (!$data){
             throw new HttpResponseException(result_array(['error' => '用户未授权']));
         }
-
     }
 
     //添加数据的时候默认参数

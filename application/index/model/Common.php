@@ -283,4 +283,22 @@ class Common extends Model {
         }
     }
 
+    /**
+     * Function: saveDatas
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * 批量添加
+     */
+    public function saveDatas($array){
+        try{
+            $this->saveAll($array);
+            return true;
+        }catch (\Exception $e){
+            $this->error = '添加失败！';
+
+            return false;
+        }
+    }
+
 }

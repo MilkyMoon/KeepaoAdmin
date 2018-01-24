@@ -10,5 +10,10 @@ namespace app\index\model;
 
 
 class Message extends Common{
+//    protected $name = 'message';
 
+    public function getMessMail(){
+        $data = $this->where('type',1)->where('state',1)->select();
+        return $data;
+    }
 }
