@@ -72,7 +72,7 @@ class Behavior extends Controller
             ]);
         }
 
-        if ($admin->getData('type') != 2) {
+        if ($admin->getData('type') != 1) {
             return json([
                 'value' => false,
                 'data' => [

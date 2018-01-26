@@ -66,16 +66,10 @@ class Permission extends Model
             $result = $permission->order('sort desc')->select();
         else
             $result  = $permission->where('state', 1)->order('sort desc')->paginate($limit, false, ['page' => $page]);
-        $flag = false;
-        $msg = '没找到数据';
-        if ($result->count() > 0) {
-            $flag = true;
-            $msg = '';
-        }
         return [
-            'value' => $flag,
+            'value' => true,
             'data' => [
-                'message' => $msg,
+                'message' => '',
                 'data' => $result
             ]
         ];

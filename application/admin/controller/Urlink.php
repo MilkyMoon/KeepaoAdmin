@@ -46,16 +46,7 @@ class Urlink extends Common
                     ]
                 ]);
             }
-
-            if (!$request->has('roles', 'param', true))
-            {
-                return json([
-                    'value' => false,
-                    'data'  => [
-                        'message' => '角色字符串不能为空'
-                    ]
-                ]);
-            }
+            
             return json($this->urlink->add($request->param('aId'), $request->param('roles')));
         }
     }

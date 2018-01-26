@@ -81,6 +81,7 @@
     'store/addequ' => ['admin/store/addequ', ['method' => 'post']],
     'store/getcou' => ['admin/store/getcou', ['method' => 'get']],
     'store/getimg' => ['admin/store/getimg', ['method' => 'get']],
+    'store/getuser' => ['admin/store/getuser', ['method' => 'get']],
 
     //设备
     'equipment/add' => ['admin/equipment/add', ['method' => 'post']],
@@ -104,6 +105,12 @@
     'active/delete' => ['admin/active/delete', ['method' => 'post']],
     'active/update' => ['admin/active/update', ['method' => 'post']],
     'active/getimg' => ['admin/active/getimg', ['method' => 'get']],
+
+    //设备类型
+    'etype/add' => ['admin/coupon/add', ['method' => 'post']],
+    'etype/select' => ['admin/coupon/select', ['method' => 'get']],
+    'etype/delete' => ['admin/coupon/delete', ['method' => 'post']],
+    'etype/update' => ['admin/coupon/update', ['method' => 'post']],
 //    '__miss__' => 'admin/behavior/miss',
 ]);
 
