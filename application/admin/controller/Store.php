@@ -68,6 +68,10 @@ class Store extends Common
             $data['search'] = $request->param('search');
         }
 
+        if ($request->has('id', 'param', true)) {
+            $data['id'] = $request->param('id');
+        }
+
         if ($request->has('page', 'param', true)) {
             $page = $request->param('page');
             if ($request->has('limit', 'param', true)) {

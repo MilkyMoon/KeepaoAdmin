@@ -177,16 +177,16 @@ class Store extends Model
             ];
         }
 
-        if (isset($data['stoname'])) {
-            if ($this->checkName($data['stoname'], $data['stoId'])) {
-                return [
-                    'value' => false,
-                    'data' => [
-                        'message' => '店名已经存在'
-                    ]
-                ];
-            }
-        }
+//        if (isset($data['stoname'])) {
+//            if ($this->checkName($data['stoname'], $data['stoId'])) {
+//                return [
+//                    'value' => false,
+//                    'data' => [
+//                        'message' => '店名已经存在'
+//                    ]
+//                ];
+//            }
+//        }
 
         $img = [];
         if (isset($data['imgs']) && !empty($data['imgs'])) {
@@ -233,7 +233,10 @@ class Store extends Model
         if (isset($data['search'])) {
             $store = $store->whereOr('stoname', 'like', '%'.$data['search'].'%');
             $store = $store->whereOr('stono', 'like', '%'.$data['search'].'%');
-            $store = $store->whereOr('stoId', $data['search']);
+        }
+
+        if (isset($data['id'])) {
+            $store = $store->where('stoId', $data['id']);
         }
 
         $store = $store->paginate($limit, false, ['page' => $page]);
