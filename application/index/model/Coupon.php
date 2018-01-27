@@ -28,7 +28,7 @@ class Coupon extends Common{
                 ->whereTime('coupon.startDate','<=',$date)
                 ->whereTime('coupon.endDate','>=',$date);
 
-        $list = $list->field('coupon.startDate,coupon.endDate,coupon.condition,coupon.stoId,coupon.num,coupon.send,coupon.discount');
+        $list = $list->field('coupon.startDate,coupon.endDate,coupon.condition,coupon.stoId,coupon.num,coupon.send,coupon.discount,coupon.title,coupon.content');
         $list = $list->select();
 
         $dataCount = sizeof($list);
@@ -73,7 +73,7 @@ class Coupon extends Common{
             $list = $list->whereTime('coupon.startDate','<=',$date)->whereTime('coupon.endDate','>=',$date);
         }
 
-        $list = $list->field('coupon.startDate,coupon.endDate,coupon.condition,coupon.stoId,coupon.num,coupon.send,coupon.discount,coupon.state,user_cou.usecouId');
+        $list = $list->field('coupon.startDate,coupon.endDate,coupon.condition,coupon.stoId,coupon.num,coupon.send,coupon.discount,coupon.state,user_cou.usecouId,coupon.title,coupon.content');
         $list = $list->select();
 
         $dataCount = sizeof($list);

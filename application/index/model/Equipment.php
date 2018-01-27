@@ -41,7 +41,7 @@ class Equipment extends Common{
                    ->where('equimg.equId',$list[$i]['equId'])
                    ->join("__IMGS__ imgs","imgs.imgId = equimg.imgId","LEFT");
 
-            $tmp = $tmp->field('imgs.imgId,imgs.name,imgs.url,imgs.path,imgs.sort');
+            $tmp = $tmp->field('imgs.imgId,imgs.name,imgs.url,imgs.sort')->order("imgs.sort","desc");
             $tmp = $tmp->select();
 
             $ins = Db::table("etype")->field('etype.name,etype.state,etype.Instructions')->where('id',$list[$i]['type'])->find();
