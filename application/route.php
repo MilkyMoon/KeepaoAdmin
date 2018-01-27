@@ -145,6 +145,18 @@ return [
     // 【前台】点赞
     'index/zan/up' => ['index/zan/thumb_up', ['method' => 'GET']],
 
+    // 【前台】查询优惠券
+    'index/coupon/couselect' => ['index/coupon/cou_select', ['method' => 'GET']],
+    // 【前台】查询用户优惠券
+    'index/coupon/useselect' => ['index/coupon/usercou_select', ['method' => 'GET']],
+    // 【前台】获取优惠券
+    'index/coupon/get' => ['index/coupon/get_coupon', ['method' => 'POST']],
+    // 【前台】使用优惠券
+    'index/coupon/use' => ['index/coupon/use_coupon', ['method' => 'GET']],
+
+    // 【前台】获取设备信息
+    'index/equipment/select' => ['index/equipment/equ_select', ['method' => 'GET']],
+
     // 【前台】添加留言
     'index/message/add' => ['index/message/message_add', ['method' => 'POST']],
     // 【前台】获取消息

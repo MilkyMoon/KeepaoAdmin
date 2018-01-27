@@ -50,6 +50,8 @@ class Sport extends Common{
 
         $list = $list->select();
 
+
+
         $dataCount = sizeof($list);
 
         //计算赞的数量以及当前用户是否有赞

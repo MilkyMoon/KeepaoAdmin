@@ -80,7 +80,7 @@ class Store extends Common{
             ->where($map)
             ->join('__EQUIPMENT__ equipment','sto_equ.equ = equipment.equId','LEFT');
 
-        $list = $list->field('equipment.equId,equipment.type,equipment.name,equipment.remark');
+        $list = $list->field('equipment.equId,equipment.equno,equipment.type,equipment.name,equipment.remark');
 
         $list = $list->select();
 
@@ -110,6 +110,34 @@ class Store extends Common{
             ->join('__CONFIG__ config','stocon.conId = config.conId','LEFT');
 
         $list = $list->field('config.conId,config.type,config.name,config.value,config.state,config.isDefault');
+
+        $list = $list->select();
+
+        return $list;
+    }
+
+    /**
+     * Function: getStoreImg
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * 门店图片
+     *
+     * @param $sid
+     */
+    public function getStoreImg($sid){
+        if(!$sid){
+            $this->error = '找不到门店图片';
+            return false;
+        }
+
+        $map['stoId'] = $sid;
+
+        $list = Db::table('sto_img')->alias('stoimg')
+            ->where('stoimg.stoId',$sid)
+            ->join('__IMGS__ imgs','stoimg.imgId = imgs.imgId','LEFT');
+
+        $list = $list->field('imgs.imgId,imgs.name,imgs.url,imgs.path,imgs.sort');
 
         $list = $list->select();
 

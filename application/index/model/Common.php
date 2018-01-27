@@ -188,6 +188,27 @@ class Common extends Model {
     }
 
     /**
+     * Function: updateAddById
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * @param $field        要自增的字段名称
+     * @param $id           主键id
+     * @param $num          -多少
+     */
+    public function updateDecById($field,$id,$num){
+        try{
+            $this->where($this->getPk(),$id)->dec($field,$num)->update();
+            return true;
+        }catch (\Exception $e){
+            $this->error = '数据更新失败';
+            return false;
+        }
+
+    }
+
+
+    /**
      * [saveData 添加]
      * PengZong
      * DateTime: 2017-04-26T17:07:18+0800

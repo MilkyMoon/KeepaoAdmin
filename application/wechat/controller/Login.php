@@ -79,4 +79,13 @@ class Login extends Common {
         return result_array(['data' => $data]);
     }
 
+    public function gettoken(){
+        $param  =  Request::instance()->param();
+        $iat = strtotime('now');  //发放时间
+        $exp = strtotime('+1 week', $iat);  //失效时间
+        $data['token'] = Token::get_token($param['openId'],$iat,$exp,Request::instance()->header()['host']);
+
+        return result_array(['data' => $data]);
+    }
+
 }
