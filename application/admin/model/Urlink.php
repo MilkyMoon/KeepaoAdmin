@@ -31,14 +31,6 @@ class Urlink extends Pivot
             ];
         }
 
-        if (empty($roles)) {
-            return [
-                'value' => false,
-                'data' => [
-                    'message' => '角色字符串不能为空'
-                ]
-            ];
-        }
 
         $arr = explode(',', $roles);
         $arr = array_unique($arr);
@@ -54,16 +46,19 @@ class Urlink extends Pivot
 //                ];
 //            }
 //        }
-        //判读角色是否在数据库中
-        $count = Db::table('role')->where('sId', 'in', $arr)->count();
-        if (Count($arr) != $count) {
-            return [
-                'value' => false,
-                'data' => [
-                    'message' => '角色数据错误'
-                ]
-            ];
+        //判读角色是否在数据库中1
+        if (!empty($data)) {
+            $count = Db::table('role')->where('sId', 'in', $arr)->count();
+            if (Count($arr) != $count) {
+                return [
+                    'value' => false,
+                    'data' => [
+                        'message' => '角色数据错误'
+                    ]
+                ];
+            }
         }
+
 
         Db::startTrans();
         try {
@@ -81,7 +76,17 @@ class Urlink extends Pivot
             }
             //dump($data);
             Db::table('urlink')->where('aId', $aId)->delete();
+            if (empty($roles)) {
+                Db::commit();
+                return [
+                    'value' => true,
+                    'data' => [
+                        'message' => '删除成功'
+                    ]
+                ];
+            }
             Db::table('urlink')->insertAll($data);
+            Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             return [

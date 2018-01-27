@@ -64,24 +64,12 @@ class Store extends Common
     public function select(Request $request)
     {
         $data = [];
-        if ($request->has('stoname', 'param', true)) {
-            $data['stoname'] = $request->param('stoname');
+        if ($request->has('search', 'param', true)) {
+            $data['search'] = $request->param('search');
         }
 
-        if ($request->has('province', 'param', true)) {
-            $data['province'] = $request->param('province');
-        }
-
-        if ($request->has('city', 'param', true)) {
-            $data['city'] = $request->param('city');
-        }
-
-        if ($request->has('county', 'param', true)) {
-            $data['county'] = $request->param('county');
-        }
-
-        if ($request->has('stono', 'param', true)) {
-            $data['stono'] = $request->param('stono');
+        if ($request->has('id', 'param', true)) {
+            $data['id'] = $request->param('id');
         }
 
         if ($request->has('page', 'param', true)) {
@@ -161,6 +149,28 @@ class Store extends Common
         }
     }
 
+    public function getequ(Request $request)
+    {
+        if ($request->has('stoId', 'param', true)) {
+            $stoId = $request->param('stoId');
+            if ($request->has('page', 'param', true)) {
+                $page = $request->param('page');
+                if ($request->has('limit', 'param', true)) {
+                    return json($this->store->getcou($stoId, $page, $request->param('limit')));
+                }
+                return json($this->store->getcou($stoId, $page));
+            }
+            return json($this->store->getcou($stoId));
+        } else {
+            return json([
+                'value' => false,
+                'data' =>[
+                    'message' => '店铺Id不能为空'
+                ]
+            ]);
+        }
+    }
+
     public function getimg(Request $request)
     {
         if ($request->has('stoId', 'param', true)) {
@@ -182,4 +192,28 @@ class Store extends Common
             ]);
         }
     }
+
+    public function getuser(Request $request)
+    {
+        if ($request->has('stoId', 'param', true)) {
+            $data = $request->param('stoId');
+            if ($request->has('page', 'param', true)) {
+                $data = $request->param('page');
+                if ($request->has('limit', 'param', true)) {
+                    return json($this->store->getuser($data, $page, $request->param('limit')));
+                }
+                return json($this->store->getimg($data, $page));
+            }
+            return json($this->store->getimg($data));
+        } else {
+            return json([
+               'value' => false,
+               'data' => [
+                   'message' => '缺少店铺ID'
+               ]
+            ]);
+        }
+    }
+
+
 }

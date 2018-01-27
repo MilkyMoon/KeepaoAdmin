@@ -16,10 +16,12 @@ class Equipment extends Validate
     protected $rule = [
         'name' => 'require',
         'equno' => 'require',
+        'type' => 'require',
     ];
 
     protected $message = [
         'name.require' => '设备名称不能为空',
         'equno.require' => '设备号不能为空',
+        'type.require' => '类型不能为空',
     ];
 }

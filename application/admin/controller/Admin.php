@@ -30,8 +30,8 @@ class Admin extends Common
 
     public function select(Request $request) {
         $data = [];
-        if ($request->has('account', 'param', true)) {
-            $data['account'] = $request->param('account');
+        if ($request->has('search', 'param', true)) {
+            $data['search'] = $request->param('search');
         }
 
         if ($request->has('state', 'param', true)) {

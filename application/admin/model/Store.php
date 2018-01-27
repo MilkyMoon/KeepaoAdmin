@@ -38,6 +38,11 @@ class Store extends Model
         return $this->belongsToMany('Coupon','sto_con', 'conId', 'stoId');
     }
 
+    public function equs()
+    {
+        return $this->belongsToMany('Equipment','sto_equ', 'equId', 'stoId');
+    }
+
     public function imgs()
     {
         return $this->belongsToMany('Imgs','sto_img', 'imgId', 'stoId');
@@ -172,16 +177,16 @@ class Store extends Model
             ];
         }
 
-        if (isset($data['stoname'])) {
-            if ($this->checkName($data['stoname'], $data['stoId'])) {
-                return [
-                    'value' => false,
-                    'data' => [
-                        'message' => '店名已经存在'
-                    ]
-                ];
-            }
-        }
+//        if (isset($data['stoname'])) {
+//            if ($this->checkName($data['stoname'], $data['stoId'])) {
+//                return [
+//                    'value' => false,
+//                    'data' => [
+//                        'message' => '店名已经存在'
+//                    ]
+//                ];
+//            }
+//        }
 
         $img = [];
         if (isset($data['imgs']) && !empty($data['imgs'])) {
@@ -225,24 +230,13 @@ class Store extends Model
     public function select($data, $page = 1, $limit = 10)
     {
         $store = new Store;
-        if (isset($data['stoname'])) {
-            $store = $store->whereOr('stoname', 'like', '%'.$data['stoname'].'%');
+        if (isset($data['search'])) {
+            $store = $store->whereOr('stoname', 'like', '%'.$data['search'].'%');
+            $store = $store->whereOr('stono', 'like', '%'.$data['search'].'%');
         }
 
-        if (isset($data['stono'])) {
-            $store = $store->whereOr('stono', 'like', '%'.$data['stono'].'%');
-        }
-
-        if (isset($data['province'])) {
-            $store = $store->whereOr('province', $data['province']);
-        }
-
-        if (isset($data['city'])) {
-            $store = $store->whereOr('city', $data['city']);
-        }
-
-        if (isset($data['county'])) {
-            $store = $store->whereOr('county', $data['county']);
+        if (isset($data['id'])) {
+            $store = $store->where('stoId', $data['id']);
         }
 
         $store = $store->paginate($limit, false, ['page' => $page]);
@@ -303,6 +297,36 @@ class Store extends Model
             ]
         ];
     }
+    public function getequ($stoId, $page = 1, $limit = 10)
+    {
+        if (empty($stoId)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '角色Id不能为空'
+                ]
+            ];
+        }
+
+        $store = Store::get($stoId);
+        if (is_null($store)) {
+            return [
+                'value' => false,
+                'data' => [
+                    'message' => '门店不存在'
+                ]
+            ];
+        }
+        //dump($admin->roles());
+        $equs = $store->equs()->paginate($limit, false, ['page' => $page]);
+        return [
+            'value' => true,
+            'data' => [
+                'message' => '查询成功',
+                'data' => $equs
+            ]
+        ];
+    }
 
     public function getimg($stoId, $page = 1, $limit = 10)
     {
@@ -347,6 +371,21 @@ class Store extends Model
             'data' => [
                 'message' => '查询成功',
                 'data' => $arr
+            ]
+        ];
+    }
+
+    public function getuser($data, $page= 1, $limit = 10)
+    {
+        $admin = new Admin;
+
+        $result = $admin->where('stoId', $data)->paginate($limit, false, ['page' => $page]);
+
+        return [
+            'value' => true,
+            'data' => [
+                'message' => '',
+                'data' => $result
             ]
         ];
     }

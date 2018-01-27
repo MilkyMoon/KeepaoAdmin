@@ -74,18 +74,17 @@ class Role extends Model
             $role = $role->where('state', $data['state']);
         }
 
-        $role = $role->order('sort desc')->paginate($limit, false, ['page' => $page]);
-
-        $flag = false;
-        $msg = '没找到数据';
-        if ($role->count() > 0) {
-            $flag = true;
-            $msg = '';
+        if (isset($data['all']) && $data['all'] == 1) {
+            $result = $role->order('sort desc')->select();
         }
+        else
+            $role = $role->order('sort desc')->paginate($limit, false, ['page' => $page]);
+
+
         return [
-            'value' => $flag,
+            'value' => true,
             'data' => [
-                'message' => $msg,
+                'message' => '',
                 'data' => $role
             ]
         ];
@@ -234,14 +233,15 @@ class Role extends Model
         }
 
         if (isset($data['state']) && $data['state'] == 0) {
-            if (1 == $data['sId']) {
+            if (session('sId') == $data['sId'] || 1 == $data['sId']) {
                 return [
                     'value' => false,
                     'data' => [
-                        'message' => '不能注销超级管理员'
+                        'message' => '不能注销自己'
                     ]
                 ];
             }
+
             foreach ($this->jichu as $item) {
                 if ($item == $data['sId']) {
                     return [

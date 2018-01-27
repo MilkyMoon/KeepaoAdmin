@@ -46,15 +46,7 @@ class Prlink extends Common
                 ]);
             }
 
-            if (!$request->has('permissions', 'param', true))
-            {
-                return json([
-                    'value' => false,
-                    'data'  => [
-                        'message' => '角色字符串不能为空'
-                    ]
-                ]);
-            }
+
             return json($this->prlink->add($request->param('rId'), $request->param('permissions')));
         }
     }
