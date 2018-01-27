@@ -26,11 +26,11 @@ class Equipment extends Common{
         }
 
         $list = $this->alias('equipment')
-                ->where($map)
-                ->join("__ETYPE__ etype",'etype.id = equipment.type',"LEFT");
+                ->where($map);
+//                ->join("__ETYPE__ etype",'etype.id = equipment.type',"LEFT");
 //                ->join("__IMGS imgs","imgs.imgId = equimg.imgId","LEFT");
 
-        $list = $list->field('equipment.equId,equipment.equno,equipment.type,equipment.name,equipment.remark,etype.name,etype.state,etype.Instructions');
+        $list = $list->field('equipment.equId,equipment.equno,equipment.type,equipment.name,equipment.remark');
         $list = $list->select();
 
         $dataCount = sizeof($list);
@@ -44,7 +44,10 @@ class Equipment extends Common{
             $tmp = $tmp->field('imgs.imgId,imgs.name,imgs.url,imgs.path,imgs.sort');
             $tmp = $tmp->select();
 
+            $ins = Db::table("etype")->field('etype.name,etype.state,etype.Instructions')->where('id',$list[$i]['type'])->find();
+
             $list[$i]['img'] = $tmp;
+            $list[$i]['instructions'] = $ins;
         }
 
         $data['list'] = $list;
