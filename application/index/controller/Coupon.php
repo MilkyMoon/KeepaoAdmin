@@ -108,4 +108,36 @@ class Coupon extends Common{
 
         return result_array(['data' => '领取成功！']);
     }
+
+    /**
+     * Function: use_coupon
+     * Author  : PengZong
+     * DateTime: ${DATE} ${TIME}
+     *
+     * 优惠券使用
+     *
+     * @return \think\response\Json
+     */
+    public function use_coupon(){
+        $param = $this->param;
+        $usecou = new model\UseCou();
+
+        $uId = !empty($param['uId']) ? $param['uId'] : '';
+        $couId = !empty($param['couId']) ? $param['couId'] : '';
+        $usecouId = !empty($param['usecouId']) ? $param['usecouId'] : '';
+        $param['state'] = 2;
+        $param['useId'] = $uId;
+
+        if(!$uId || !$usecouId || !$couId){
+            return result_array(['error' => '使用失败！']);
+        }
+
+        $data = $usecou->updateDataById($param,$usecouId);
+
+        if(!$data){
+            return result_array(['error' => $usecou->getError()]);
+        }
+
+        return result_array(['data' => '使用成功！']);
+    }
 }

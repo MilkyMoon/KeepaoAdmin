@@ -26,11 +26,11 @@ class Equipment extends Common{
         }
 
         $list = $this->alias('equipment')
-                ->where($map);
-//                ->join("__EQUIMG__ equimg",'equimg.equId = equipment.equId',"LEFT")
+                ->where($map)
+                ->join("__ETYPE__ etype",'etype.id = equipment.type',"LEFT");
 //                ->join("__IMGS imgs","imgs.imgId = equimg.imgId","LEFT");
 
-        $list = $list->field('equipment.equId,equipment.equno,equipment.type,equipment.name,equipment.remark');
+        $list = $list->field('equipment.equId,equipment.equno,equipment.type,equipment.name,equipment.remark,etype.name,etype.state,etype.Instructions');
         $list = $list->select();
 
         $dataCount = sizeof($list);

@@ -26,4 +26,18 @@ class UseCou extends Common{
             return false;
         }
     }
+
+    public function useCou($param){
+        try{
+            $result = $this->where('useId',$param['uId'])->where('couId',$param['couId'])->save($param);
+            if (false == $result) {
+                return false;
+            }
+
+            return true;
+        }catch (\Exception $e){
+            $this->error = '使用失败！';
+            return false;
+        }
+    }
 }

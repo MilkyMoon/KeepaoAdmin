@@ -144,6 +144,8 @@ return [
     'index/coupon/useselect' => ['index/coupon/usercou_select', ['method' => 'GET']],
     // 【前台】获取优惠券
     'index/coupon/get' => ['index/coupon/get_coupon', ['method' => 'POST']],
+    // 【前台】使用优惠券
+    'index/coupon/use' => ['index/coupon/use_coupon', ['method' => 'GET']],
 
     // 【前台】获取设备信息
     'index/equipment/select' => ['index/equipment/equ_select', ['method' => 'GET']],
