@@ -82,6 +82,5 @@ class User extends Common {
         $param = $this->param;
 
 
-
     }
 }

@@ -59,11 +59,12 @@ class Chart extends Common {
         }
 
         $data = $chart->getChartList($date,$uid,$sid,'','');
+        $rdate = '';
 
         foreach ($data['list'] as $item){
 //            print_r($data);
             if($uid == $item['uId']){
-                $data = $item;
+                $rdate = $item;
                 break;
             }
         }
@@ -72,7 +73,7 @@ class Chart extends Common {
             return result_array(['error' => $chart->getError()]);
         }
 
-        return result_array(['data' => $data]);
+        return result_array(['data' => $rdate]);
     }
 
     /**

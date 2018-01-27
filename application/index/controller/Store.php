@@ -61,7 +61,7 @@ class Store extends Common {
         $id = !empty($param['id']) ? $param['id'] : '';
 
         //要显示的字段
-        $array = ['stoId','admId','stoname','county','province','city','address','longitude','latitude','isdirect'];
+        $array = ['stoId','stono','stoname','county','province','city','address','longitude','latitude','isdirect'];
 
         $data = $store->getDataById($id,$array);
 
@@ -71,12 +71,15 @@ class Store extends Common {
 
         $config = $store->getStoreConfig($id);      //门店配置
         $devices = $store->getStoreDevices($id);    //门店设备
+        $images = $store->getStoreImg($id);         //门店图片
 
         if(!$config){$config = '';}
         if(!$devices){$devices = '';}
+        if(!$images){$images = '';}
 
         $data['devices'] = $devices;
         $data['config']  = $config;
+        $data['images']  = $images;
 
         return result_array(['data' => $data]);
     }

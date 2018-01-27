@@ -21,24 +21,25 @@ class Common extends \app\common\controller\Common {
 
         $param  =  Request::instance()->param();
         $header = Request::instance()->header();
-        $this->header = $header;
+//        $this->header = $header;
         $this->param = $param;
     }
 
     protected $beforeActionList = [
-        'first'  =>  ['only'=>'update_user,find_user,store_details,store_select,statistics,user_select,message_add,cou_select,message_select'],   //需要验证请求是否合法的方法
-        'second' =>  ['only'=>'thumb_up,set_goal,message_add'], //需要添加数据的时候默认参数的方法
+        'first'  =>  ['only'=>'thumb_up,update_user,find_user,store_details,store_select,statistics,user_select,message_add,cou_select,message_select,chart_select,cou_select,usercou_select,get_coupon,equ_select'],   //需要验证请求是否合法的方法
+
+        'second' =>  ['only'=>'thumb_up,set_goal,message_add,get_coupon'], //需要添加数据的时候默认参数的方法
         'third'  =>  ['only'=>'update_user']    //需要更新数据的时候默认参数的方法
     ];
 
     //判断请求是否合法
     protected function first(){
-        $header = $this->header;
+        $param = $this->param;
 
-        $token = !empty($header['token']) ? $header['token'] : '';
+        $token = !empty($param['token']) ? $param['token'] : '';
         $data = '';
         if ($token){
-            $data = Token::encode_token_user($header['token']);
+            $data = Token::encode_token_user($param['token']);
         }
 
         if (!$data){
@@ -53,7 +54,7 @@ class Common extends \app\common\controller\Common {
         $uid = !empty($param['uId']) ? $param['uId'] : '';
 
         if(!$uid){
-            throw new HttpResponseException(result_array(['error' => '参数错误！']));
+            throw new HttpResponseException(result_array(['error' => $param]));
         }
 
         $param['createUser'] = $param['uId'];

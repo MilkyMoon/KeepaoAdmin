@@ -9,6 +9,47 @@
 namespace app\index\model;
 
 
+use think\Db;
+
 class Equipment extends Common{
     protected $name = 'equipment';
+
+    public function getEquipment($equId,$type){
+        $map = [];
+
+        if($equId){
+            $map['equId'] = $equId;
+        }
+
+        if($type){
+            $map['type'] = $type;
+        }
+
+        $list = $this->alias('equipment')
+                ->where($map);
+//                ->join("__EQUIMG__ equimg",'equimg.equId = equipment.equId',"LEFT")
+//                ->join("__IMGS imgs","imgs.imgId = equimg.imgId","LEFT");
+
+        $list = $list->field('equipment.equId,equipment.equno,equipment.type,equipment.name,equipment.remark');
+        $list = $list->select();
+
+        $dataCount = sizeof($list);
+
+        //计算赞的数量以及当前用户是否有赞
+        for ($i = 0; $i<$dataCount; $i++) {
+            $tmp = Db::table("equ_img")->alias('equimg')
+                   ->where('equimg.equId',$list[$i]['equId'])
+                   ->join("__IMGS__ imgs","imgs.imgId = equimg.imgId","LEFT");
+
+            $tmp = $tmp->field('imgs.imgId,imgs.name,imgs.url,imgs.path,imgs.sort');
+            $tmp = $tmp->select();
+
+            $list[$i]['img'] = $tmp;
+        }
+
+        $data['list'] = $list;
+        $data['dataCount'] = $dataCount;
+
+        return $data;
+    }
 }
