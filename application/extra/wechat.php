@@ -18,15 +18,11 @@ return [
     /**
      * 账号基本信息，请从微信公众平台/开放平台获取
      */
-//    'app_id'  => 'wxbc45d17cfa983e08',                                      // AppID
-//    'secret'  => 'd2de6b7da64a225c08a6ab3e788e986e',                        // AppSecret
-//    'token'   => 'FlappyWorld',                                             // Token
-//    'aes_key' => 'bdjFkM6kWxx7TGYTdOQ6SyOCTLuNVWWRkovM1cSH6rA',             // EncodingAESKey，安全模式下请一定要填写！！！
 
-    'app_id'  => 'wxd6d243edddb2d68e',                                      // AppID
-    'secret'  => '74238157f30b8eeb50a4a0383f33fdea',                        // AppSecret
-    'token'   => 'FlappyWorld',                                             // Token
-    'aes_key' => 'bdjFkM6kWxx7TGYTdOQ6SyOCTLuNVWWRkovM1cSH6rA',             // EncodingAESKey，安全模式下请一定要填写！！！
+    'app_id'  => '',                                      // AppID
+    'secret'  => '',                        // AppSecret
+    'token'   => '',                                             // Token
+    'aes_key' => '',             // EncodingAESKey，安全模式下请一定要填写！！！
     /**
      * 日志配置
      *
